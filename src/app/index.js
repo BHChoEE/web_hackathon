@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import UserInput from './userInput';
-import PaperList from './list';
+import PaperList from './paperList';
 import ReferenceList from './refList';
 // import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 const JSSoup = require('jssoup').default;
@@ -12,7 +12,7 @@ class App extends React.Component{
         super();
         this.state = {
             query: "",
-            objectList: [],
+            paperList: [],
             referenceList: [],
         }
         this.updateQuery = this.updateQuery.bind(this);
@@ -20,7 +20,6 @@ class App extends React.Component{
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
     }
     sendQryCb = () => {
-        console.log(this.state.query);
         var query = this.state.query;
         axios.get('http://export.arxiv.org/api/query?search_query=' + query)
         .then(response => {
@@ -31,16 +30,14 @@ class App extends React.Component{
                 var published = entry.find('published').contents[0]._text.substring(0, 4);
                 if (parseInt(published) >= 2008) {
                     var title = entry.find('title').contents[0]._text
-                    //console.log(title);
                     var id = entry.find('id').contents[0]._text.split("/abs/")[1].split("v")[0];
-                    //console.log(id);
                     tmpList.push({
                         title: title,
-                        id: id,
+                        id: 'arXiv:' + id,
                     });
                 }
             });
-            this.setState({objectList: tmpList});
+            this.setState({paperList: tmpList});
         })
         .catch(error => {
             console.log(error);
@@ -50,19 +47,20 @@ class App extends React.Component{
         this.setState({query: query});
     }
 
-    handleChooseTitle = (arxiv_id) => {
+    handleChooseTitle = (title, id) => {
         
-        axios.get('http://api.semanticscholar.org/v1/paper/arXiv:' + arxiv_id + '?include_unknown_references=false')
+        axios.get('http://api.semanticscholar.org/v1/paper/' + id + '?include_unknown_references=false')
         .then(response => {
             var tmpList = [];
             response.data.references.forEach((ref) => {
                 if (ref.isInfluential) {
-                    tmpList.push({title:ref.title, url: ref.url});
+                    // console.log(ref);
+                    tmpList.push({title: ref.title, id: ref.paperId})
                 }
             });
             this.setState({
                 referenceList: tmpList,
-                objectList: []
+                paperList: [{title: title, id: id}],
             });
         })
         .catch(error => {
@@ -74,8 +72,8 @@ class App extends React.Component{
         return(
             <div>
                 <UserInput sendQryCb = {this.sendQryCb} query = {this.state.query} updateQuery = {this.updateQuery}/>
-                <PaperList objectList = {this.state.objectList} handleChooseTitle = {this.handleChooseTitle}></PaperList>
-                <ReferenceList referenceList = {this.state.referenceList}></ReferenceList>
+                <PaperList paperList = {this.state.paperList} handleChooseTitle = {this.handleChooseTitle}></PaperList>
+                <ReferenceList referenceList = {this.state.referenceList} handleChooseTitle = {this.handleChooseTitle}></ReferenceList>
             </div>
                 
         );

@@ -20,12 +20,13 @@ class PaperList extends React.Component{
         
     }
     handleQuery = (e) => {
-        //console.log(e.target.parentElement.children[1].innerHTML);
-        this.props.handleChooseTitle(e.target.parentElement.children[1].innerHTML);
+        var children = e.target.parentElement.children;
+        this.props.handleChooseTitle(children[0].innerHTML, children[1].innerHTML);
     };
     render(){
         const { classes } = this.props;
-        var objectList = this.props.objectList.map((item) => {
+        // console.log(this.props.paperList);
+        var objectList = this.props.paperList.map((item) => {
             return (
                 <ListItem button onClick= {this.handleQuery}>
                     <ListItemText inset primary={item.title} secondary = {item.id} />
