@@ -1,2 +1,3 @@
 node_modules/
+public/outputs/*
 .DS_Store

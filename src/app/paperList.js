@@ -20,6 +20,15 @@ class PaperList extends React.Component{
         
     }
     handleQuery = (e) => {
+        var node = e.target.parentElement;
+        console.log(node.parentElement.parentElement);
+        console.log(node.parentElement.parentElement.parentElement);
+        console.log(node.parentElement.parentElement.parentElement.parentElement);
+        var index = 0;
+        while ((node = node.previousSibling) != null) {
+          index++;
+        }
+        console.log(index);
         var children = e.target.parentElement.children;
         this.props.handleChooseTitle(children[0].innerHTML, children[1].innerHTML);
     };

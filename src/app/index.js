@@ -33,7 +33,7 @@ class App extends React.Component{
                     var id = entry.find('id').contents[0]._text.split("/abs/")[1].split("v")[0];
                     tmpList.push({
                         title: title,
-                        id: 'arXiv:' + id,
+                        id: "arXiv:" + id,
                     });
                 }
             });
@@ -58,9 +58,23 @@ class App extends React.Component{
                     tmpList.push({title: ref.title, id: ref.paperId})
                 }
             });
+            var paperList = this.state.paperList;
+            if (id.includes("arXiv:")) {
+              paperList = [{title: title, id: id}];
+            }
+            else {
+              var i = 0;
+              for (; i < paperList.length; i++) {
+                if (paperList[i].id == id) {
+                  break;
+                }
+              }
+              paperList = paperList.slice(0, i);
+              paperList.push({title: title, id: id});
+            }
             this.setState({
                 referenceList: tmpList,
-                paperList: [{title: title, id: id}],
+                paperList: paperList,
             });
         })
         .catch(error => {

@@ -13,8 +13,6 @@ class ReferenceList extends React.Component {
     };
 
     render() {
-                //print(print_format.format(ref['title'], ref['paperId']))
-        console.log(this.props.referenceList);
         var objectList = this.props.referenceList.map((item) => {
             return (
                 <ListItem button onClick={this.handleQuery}>
