@@ -1,10 +1,22 @@
-# web_hackathon
-for demo
+# User-friendly Paper Query System
+### Usage
 
-Command Line
 1. Get Packages
-  - npm install
-2. Build src:
-  - npm run build
+```npm install```
+
+2. Build src
+```npm run build```
+
 3. Start Server
-  - npm run start
+```npm run start```
+
+4. Visit `localhost:3000` at your browser :) 
+
+
+
+### Teamwork
+
+- B03901022 卓伯鴻
+  - `server.js`, `webpack.config.js`, `main.js`, `refList.js`, `userInput.js`
+- B03902086 李鈺昇
+  - `index.js`, `paperList.js`
