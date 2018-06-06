@@ -7,8 +7,8 @@ import ReferenceList from './refList';
 // import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 const JSSoup = require('jssoup').default;
 
-class App extends React.Component{
-    constructor(){
+class App extends React.Component {
+    constructor() {
         super();
         this.state = {
             query: "",
@@ -16,64 +16,66 @@ class App extends React.Component{
             referenceList: [],
         }
         this.updateQuery = this.updateQuery.bind(this);
-        this.sendQryCb = this.sendQryCb.bind(this);
+        this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
     }
-    sendQryCb = () => {
+
+    sendQuery() {
         var query = this.state.query;
-        axios.get('http://export.arxiv.org/api/query?search_query=' + query)
+        axios.get("http://export.arxiv.org/api/query?search_query=" + query)
         .then(response => {
             var soup = new JSSoup(response.data);
-            var entries = soup.findAll('entry');
-            var tmpList = [];
-            entries.forEach((entry) => {
-                var published = entry.find('published').contents[0]._text.substring(0, 4);
+            var entries = soup.findAll("entry");
+            var paperList = [];
+            entries.forEach(entry => {
+                var published = entry.find("published").contents[0]._text.substring(0, 4);
                 if (parseInt(published) >= 2008) {
-                    var title = entry.find('title').contents[0]._text
-                    var id = entry.find('id').contents[0]._text.split("/abs/")[1].split("v")[0];
-                    tmpList.push({
-                        title: title,
+                    var title = entry.find("title").contents[0]._text
+                    var id = entry.find("id").contents[0]._text.split("/abs/")[1].split("v")[0];
+                    paperList.push({
+                        title: title.replace("\n", " "),
                         id: "arXiv:" + id,
                     });
                 }
             });
-            this.setState({paperList: tmpList});
+            this.setState({paperList: paperList});
         })
         .catch(error => {
             console.log(error);
         });
     }
-    updateQuery = (query) => {
+
+    updateQuery(query) {
         this.setState({query: query});
     }
 
-    handleChooseTitle = (title, id) => {
-        
-        axios.get('http://api.semanticscholar.org/v1/paper/' + id + '?include_unknown_references=false')
+    handleChooseTitle(title, id) {
+        axios.get("http://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
-            var tmpList = [];
-            response.data.references.forEach((ref) => {
-                if (ref.isInfluential) {
-                    // console.log(ref);
-                    tmpList.push({title: ref.title, id: ref.paperId})
+            var referenceList = [];
+            response.data.references.forEach(ref => {
+                // if (ref.isInfluential) {
+                if (true) {
+                    referenceList.push({title: ref.title, id: ref.paperId})
                 }
             });
             var paperList = this.state.paperList;
+            var paper = {title: title.replace("\n", " "), id: id};
             if (id.includes("arXiv:")) {
-              paperList = [{title: title, id: id}];
+                paperList = [paper];
             }
             else {
-              var i = 0;
-              for (; i < paperList.length; i++) {
-                if (paperList[i].id == id) {
-                  break;
+                var i = 0;
+                for (; i < paperList.length; i++) {
+                    if (paperList[i].id == id) {
+                        break;
+                    }
                 }
-              }
-              paperList = paperList.slice(0, i);
-              paperList.push({title: title, id: id});
+                paperList = paperList.slice(0, i);
+                paperList.push(paper);
             }
             this.setState({
-                referenceList: tmpList,
+                referenceList: referenceList,
                 paperList: paperList,
             });
         })
@@ -82,15 +84,15 @@ class App extends React.Component{
         });
     }
 
-    render(){
-        return(
+    render() {
+        return (
             <div>
-                <UserInput sendQryCb = {this.sendQryCb} query = {this.state.query} updateQuery = {this.updateQuery}/>
-                <PaperList paperList = {this.state.paperList} handleChooseTitle = {this.handleChooseTitle}></PaperList>
-                <ReferenceList referenceList = {this.state.referenceList} handleChooseTitle = {this.handleChooseTitle}></ReferenceList>
+                <UserInput sendQuery={this.sendQuery} query={this.state.query} updateQuery={this.updateQuery} />
+                <PaperList paperList={this.state.paperList} handleChooseTitle={this.handleChooseTitle} />
+                <ReferenceList referenceList={this.state.referenceList} handleChooseTitle={this.handleChooseTitle} />
             </div>
-                
         );
     }
 }
-ReactDOM.render(<App />, document.getElementById('app'));
+
+ReactDOM.render(<App />, document.getElementById("app"));
