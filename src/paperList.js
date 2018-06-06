@@ -22,13 +22,11 @@ class PaperList extends React.Component {
     }
 
     render() {
-        var objectList = this.props.paperList.map(item => {
-            return (
-                <ListItem button onClick={this.handleQuery}>
-                    <ListItemText inset primary={item.title} secondary={item.id} />
-                </ListItem>
-            );
-        });
+        var objectList = this.props.paperList.map(item => (
+            <ListItem button onClick={this.handleQuery}>
+                <ListItemText inset primary={item.title} secondary={item.id} />
+            </ListItem>
+        ));
         const { classes } = this.props;
         return (
             <div className={classes.root}>

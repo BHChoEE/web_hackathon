@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import StarIcon from '@material-ui/icons/Star';
 
 class ReferenceList extends React.Component {
     constructor(props) {
@@ -14,13 +15,17 @@ class ReferenceList extends React.Component {
     }
 
     render() {
-        var objectList = this.props.referenceList.map(item => {
-            return (
-                <ListItem button onClick={this.handleQuery}>
-                    <ListItemText inset primary={item.title} secondary={item.id} />
-                </ListItem>
-            )
-        });
+        var objectList = this.props.referenceList.map(item => (
+            <ListItem button onClick={this.handleQuery}>
+                {
+                    item.isInfluential &&
+                    <ListItemIcon>
+                        <StarIcon />
+                    </ListItemIcon>
+                }
+                <ListItemText inset primary={item.title} secondary={item.id} />
+            </ListItem>
+        ));
         return (
             <div>
                 <List component="nav">

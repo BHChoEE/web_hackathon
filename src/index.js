@@ -54,10 +54,11 @@ class App extends React.Component {
         .then(response => {
             var referenceList = [];
             response.data.references.forEach(ref => {
-                // if (ref.isInfluential) {
-                if (true) {
-                    referenceList.push({title: ref.title, id: ref.paperId})
-                }
+                referenceList.push({
+                    title: ref.title,
+                    id: ref.paperId,
+                    isInfluential: ref.isInfluential,
+                });
             });
             var paperList = this.state.paperList;
             var paper = {title: title.replace("\n", " "), id: id};
