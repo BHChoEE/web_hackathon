@@ -15,7 +15,11 @@ class ReferenceList extends React.Component {
     }
 
     render() {
-        var objectList = this.props.referenceList.map(item => (
+        var references = this.props.referenceList;
+        if (this.props.onlyInfluential) {
+            references = references.filter(ref => ref.isInfluential);
+        }
+        references = references.map(item => (
             <ListItem button onClick={this.handleQuery}>
                 {
                     item.isInfluential &&
@@ -29,7 +33,7 @@ class ReferenceList extends React.Component {
         return (
             <div>
                 <List component="nav">
-                    {objectList}
+                    {references}
                 </List>
             </div>
         );

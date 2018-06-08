@@ -22,7 +22,7 @@ class PaperList extends React.Component {
     }
 
     render() {
-        var objectList = this.props.paperList.map(item => (
+        var papers = this.props.paperList.map(item => (
             <ListItem button onClick={this.handleQuery}>
                 <ListItemText inset primary={item.title} secondary={item.id} />
             </ListItem>
@@ -31,7 +31,7 @@ class PaperList extends React.Component {
         return (
             <div className={classes.root}>
                 <List component="nav">
-                    {objectList}
+                    {papers}
                 </List>
             </div>
         );

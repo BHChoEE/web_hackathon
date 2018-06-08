@@ -4,6 +4,8 @@ import axios from 'axios';
 import UserInput from './userInput';
 import PaperList from './paperList';
 import ReferenceList from './refList';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 // import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 const JSSoup = require('jssoup').default;
 
@@ -14,15 +16,17 @@ class App extends React.Component {
             query: "",
             paperList: [],
             referenceList: [],
+            onlyInfluential: false,
         }
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
+        this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
     }
 
     sendQuery() {
         var query = this.state.query;
-        axios.get("http://export.arxiv.org/api/query?search_query=" + query)
+        axios.get("https://export.arxiv.org/api/query?search_query=" + query)
         .then(response => {
             var soup = new JSSoup(response.data);
             var entries = soup.findAll("entry");
@@ -49,16 +53,26 @@ class App extends React.Component {
         this.setState({query: query});
     }
 
+    updateOnlyInfluential(e) {
+        this.setState({onlyInfluential: e.target.checked});
+    }
+
     handleChooseTitle(title, id) {
-        axios.get("http://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
+        axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
             response.data.references.forEach(ref => {
-                referenceList.push({
+                var reference = {
                     title: ref.title,
                     id: ref.paperId,
                     isInfluential: ref.isInfluential,
-                });
+                };
+                if (ref.isInfluential) {
+                    referenceList.unshift(reference);
+                }
+                else {
+                    referenceList.push(reference);
+                }
             });
             var paperList = this.state.paperList;
             var paper = {title: title.replace("\n", " "), id: id};
@@ -88,9 +102,30 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <UserInput sendQuery={this.sendQuery} query={this.state.query} updateQuery={this.updateQuery} />
-                <PaperList paperList={this.state.paperList} handleChooseTitle={this.handleChooseTitle} />
-                <ReferenceList referenceList={this.state.referenceList} handleChooseTitle={this.handleChooseTitle} />
+                <UserInput
+                    sendQuery={this.sendQuery}
+                    query={this.state.query}
+                    updateQuery={this.updateQuery}
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={this.state.onlyInfluential}
+                            onChange={this.updateOnlyInfluential}
+                            color="primary"
+                        />
+                    }
+                    label="Only influential"
+                />
+                <PaperList
+                    paperList={this.state.paperList}
+                    handleChooseTitle={this.handleChooseTitle}
+                />
+                <ReferenceList
+                    referenceList={this.state.referenceList}
+                    handleChooseTitle={this.handleChooseTitle}
+                    onlyInfluential={this.state.onlyInfluential}
+                />
             </div>
         );
     }
