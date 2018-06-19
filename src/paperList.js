@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import { List } from '@material-ui/core';
+import PaperItem from './paperItem';
 
 const styles = theme => ({
     root: {
@@ -16,16 +17,13 @@ class PaperList extends React.Component {
         this.handleQuery = this.handleQuery.bind(this);
     }
 
-    handleQuery(e) {
-        var children = e.target.parentElement.children;
-        this.props.handleChooseTitle(children[0].innerHTML, children[1].innerHTML);
+    handleQuery(title, id, info) {
+        this.props.handleChooseTitle(title, id, info);
     }
 
     render() {
-        var papers = this.props.paperList.map(item => (
-            <ListItem button onClick={this.handleQuery}>
-                <ListItemText inset primary={item.title} secondary={item.id} />
-            </ListItem>
+        var papers = this.props.paperList.map(paper => (
+            <PaperItem title={paper.title} id={paper.id} key={paper.id} info={paper.info} handleQuery={this.handleQuery} />
         ));
         const { classes } = this.props;
         return (

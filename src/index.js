@@ -32,17 +32,23 @@ class App extends React.Component {
             var entries = soup.findAll("entry");
             var paperList = [];
             entries.forEach(entry => {
-                var published = entry.find("published").contents[0]._text.substring(0, 4);
-                if (parseInt(published) >= 2008) {
-                    var title = entry.find("title").contents[0]._text
-                    var id = entry.find("id").contents[0]._text.split("/abs/")[1].split("v")[0];
+                var find = (str, tag) => tag.find(str).contents[0]._text;
+                // var authorList = entry.findAll("author").map(tag => find("name", tag));
+                var year = find("published", entry).substring(0, 4);
+                if (parseInt(year) >= 2008) {
+                    var title = find("title", entry);
+                    var id = find("id", entry).split("/abs/")[1].split("v")[0];
                     paperList.push({
                         title: title.replace("\n", " "),
                         id: "arXiv:" + id,
+                        info: "ArXiv, " + year,
                     });
                 }
             });
-            this.setState({paperList: paperList});
+            this.setState({
+                paperList: paperList,
+                referenceList: [],
+            });
         })
         .catch(error => {
             console.log(error);
@@ -57,7 +63,7 @@ class App extends React.Component {
         this.setState({onlyInfluential: e.target.checked});
     }
 
-    handleChooseTitle(title, id) {
+    handleChooseTitle(title, id, info) {
         axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
@@ -66,6 +72,7 @@ class App extends React.Component {
                     title: ref.title,
                     id: ref.paperId,
                     isInfluential: ref.isInfluential,
+                    info: ref.venue + ", " + ref.year,
                 };
                 if (ref.isInfluential) {
                     referenceList.unshift(reference);
@@ -75,7 +82,11 @@ class App extends React.Component {
                 }
             });
             var paperList = this.state.paperList;
-            var paper = {title: title.replace("\n", " "), id: id};
+            var paper = {
+                title: title.replace("\n", " "),
+                id: id,
+                info: info,
+            };
             if (id.includes("arXiv:")) {
                 paperList = [paper];
             }
