@@ -13,6 +13,24 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // render an API index page
+app.post('/user/signup', function(req, res){
+	var user = {
+		username: req.body.username,
+		password: req.body.password,
+		updateTime: req.body.updateTime
+	}
+	// should be modified to store new user in DB
+	res.send(user);
+});
+app.post('/user/login', function(req, res){
+	var user = {
+		username: req.body.username,
+		password: req.body.password,
+		updateTime: req.body.updateTime
+	}
+	// should be modified to check users in DB
+	res.send(user);
+});
 app.get('/*', function(req, res){
 	res.sendFile(path.join(__dirname, '/public/index.html'), function(err){
 		if(err){res.status(500).send(err);}

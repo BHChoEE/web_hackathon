@@ -7,9 +7,9 @@ const app = (
     <BrowserRouter>
         <Switch>
             <Route exact path = "/" component={Login} />
-            <Route path = "signup" component={SignUp} />
+            <Route path = "/signup" component={SignUp} />
             <Redirect from="/login" to="/" />
-            <Route path = "/main" component={Main} />
+            <Route path = "/main/" component={Main} />
         </Switch>
     </BrowserRouter>
 );
