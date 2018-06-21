@@ -16,11 +16,13 @@ class Main extends React.Component {
             paperList: [],
             referenceList: [],
             onlyInfluential: false,
+            checkedList: [],
         }
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
+        this.handleToggleChecked = this.handleToggleChecked.bind(this);
     }
 
     sendQuery() {
@@ -40,7 +42,7 @@ class Main extends React.Component {
                     paperList.push({
                         title: title.replace("\n", " "),
                         id: "arXiv:" + id,
-                        info: "ArXiv, " + year,
+                        info: year + ", " + "ArXiv",
                     });
                 }
             });
@@ -67,11 +69,15 @@ class Main extends React.Component {
         .then(response => {
             var referenceList = [];
             response.data.references.forEach(ref => {
+                var info = ref.year;
+                if (ref.venue) {
+                    info += ", " + ref.venue;
+                }
                 var reference = {
                     title: ref.title,
                     id: ref.paperId,
                     isInfluential: ref.isInfluential,
-                    info: ref.venue + ", " + ref.year,
+                    info: info,
                 };
                 if (ref.isInfluential) {
                     referenceList.unshift(reference);
@@ -80,7 +86,7 @@ class Main extends React.Component {
                     referenceList.push(reference);
                 }
             });
-            var paperList = this.state.paperList;
+            var paperList = [...this.state.paperList];
             var paper = {
                 title: title.replace("\n", " "),
                 id: id,
@@ -109,6 +115,18 @@ class Main extends React.Component {
         });
     }
 
+    handleToggleChecked = title => () => {
+        var index = this.state.checkedList.indexOf(title);
+        var newCheckedList = [...this.state.checkedList];
+        if (index === -1) {
+            newCheckedList.push(title);
+        } else {
+            newCheckedList.splice(index, 1);
+        }
+        
+        this.setState({checkedList: newCheckedList});
+    }
+    
     render() {
         return (
             <div>
@@ -127,17 +145,25 @@ class Main extends React.Component {
                     }
                     label="Only influential"
                 />
-                <PaperList
-                    paperList={this.state.paperList}
-                    handleChooseTitle={this.handleChooseTitle}
-                />
+                {
+                    this.state.paperList.length > 0 &&
+                    <PaperList
+                        paperList={this.state.paperList}
+                        handleChooseTitle={this.handleChooseTitle}
+                        handleToggleChecked={this.handleToggleChecked}
+                        checkedList={this.state.checkedList}
+                    />
+                }
                 <ReferenceList
                     referenceList={this.state.referenceList}
                     handleChooseTitle={this.handleChooseTitle}
                     onlyInfluential={this.state.onlyInfluential}
+                    handleToggleChecked={this.handleToggleChecked}
+                    checkedList={this.state.checkedList}
                 />
             </div>
         );
     }
 }
+
 export default Main;

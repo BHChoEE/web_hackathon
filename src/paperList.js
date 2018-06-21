@@ -23,7 +23,15 @@ class PaperList extends React.Component {
 
     render() {
         var papers = this.props.paperList.map(paper => (
-            <PaperItem title={paper.title} id={paper.id} key={paper.id} info={paper.info} handleQuery={this.handleQuery} />
+            <PaperItem
+                title={paper.title}
+                id={paper.id}
+                key={paper.id}
+                info={paper.info}
+                checked={this.props.checkedList.indexOf(paper.title) !== -1}
+                handleQuery={this.handleQuery}
+                handleToggleChecked={this.props.handleToggleChecked}
+            />
         ));
         const { classes } = this.props;
         return (

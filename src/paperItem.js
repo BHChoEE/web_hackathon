@@ -1,6 +1,8 @@
 import React from 'react';
 import { ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
 import StarIcon from '@material-ui/icons/Star';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
 
 class PaperItem extends React.Component {
     constructor(props) {
@@ -23,6 +25,12 @@ class PaperItem extends React.Component {
                 }
                 {/* props.info may vary */}
                 <ListItemText inset primary={this.props.title} secondary={this.props.info} />
+                <ListItemSecondaryAction>
+                    <Checkbox
+                        onChange={this.props.handleToggleChecked(this.props.title)}
+                        checked={this.props.checked}
+                    />
+                </ListItemSecondaryAction>
             </ListItem>
         );
     }

@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Login from './login.js';
 import SignUp from './signup.js';
 import Main from './main.js'
-const app = (
+
+const App = () => (
     <BrowserRouter>
         <Switch>
             <Route exact path = "/" component={Login} />
@@ -13,4 +14,5 @@ const app = (
         </Switch>
     </BrowserRouter>
 );
-export default app;
+
+export default App;

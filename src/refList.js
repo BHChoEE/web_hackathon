@@ -19,7 +19,16 @@ class ReferenceList extends React.Component {
             references = references.filter(ref => ref.isInfluential);
         }
         references = references.map(ref => (
-            <PaperItem title={ref.title} id={ref.id} key={ref.id} isInfluential={ref.isInfluential} info={ref.info} handleQuery={this.handleQuery} />
+            <PaperItem
+                title={ref.title}
+                id={ref.id}
+                key={ref.id}
+                isInfluential={ref.isInfluential}
+                info={ref.info}
+                checked={this.props.checkedList.indexOf(ref.title) !== -1}
+                handleQuery={this.handleQuery}
+                handleToggleChecked={this.props.handleToggleChecked}
+            />
         ));
         return (
             <div>
