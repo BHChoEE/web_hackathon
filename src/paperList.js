@@ -22,20 +22,24 @@ class PaperList extends React.Component {
     }
 
     render() {
-        var papers = this.props.paperList.map(paper => (
+        var papers = [...this.props.list];
+        if (this.props.onlyInfluential) {
+            papers = papers.filter(paper => paper.isInfluential);
+        }
+        papers = papers.map(paper => (
             <PaperItem
                 title={paper.title}
                 id={paper.id}
                 key={paper.id}
                 info={paper.info}
                 checked={this.props.checkedList.indexOf(paper.title) !== -1}
+                isInfluential={paper.isInfluential}
                 handleQuery={this.handleQuery}
                 handleToggleChecked={this.props.handleToggleChecked}
             />
         ));
-        const { classes } = this.props;
         return (
-            <div className={classes.root}>
+            <div className={this.props.classes.root}>
                 <List component="nav">
                     {papers}
                 </List>

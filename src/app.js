@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Login from './login.js';
 import SignUp from './signup.js';
@@ -15,4 +16,4 @@ const App = () => (
     </BrowserRouter>
 );
 
-export default App;
+ReactDOM.render(<App />, document.getElementById('app'));

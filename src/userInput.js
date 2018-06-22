@@ -47,7 +47,7 @@ class UserInput extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <Grid container className={classes.root} spacing={24}>
+            <Grid container spacing={24}>
                 <Grid item sm={10}>
                     <Input placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
                     onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus />

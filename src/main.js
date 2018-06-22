@@ -2,9 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import UserInput from './userInput';
 import PaperList from './paperList';
-import ReferenceList from './refList';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import DetailedPaperList from './detailedPaperList';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -43,7 +41,7 @@ class Main extends React.Component {
         this.state = {
             username: "",
             query: "",
-            paperList: [],
+            searchResultList: [],
             referenceList: [],
             citationList: [],
             onlyInfluentialRefs: false,
@@ -73,7 +71,7 @@ class Main extends React.Component {
         .then(response => {
             var soup = new JSSoup(response.data);
             var entries = soup.findAll("entry");
-            var paperList = [];
+            var searchResultList = [];
             entries.forEach(entry => {
                 var find = (str, tag) => tag.find(str).contents[0]._text;
                 // var authorList = entry.findAll("author").map(tag => find("name", tag));
@@ -81,7 +79,7 @@ class Main extends React.Component {
                 if (parseInt(year) >= 2008) {
                     var title = find("title", entry);
                     var id = find("id", entry).split("/abs/")[1].split("v")[0];
-                    paperList.push({
+                    searchResultList.push({
                         title: title.replace("\n", " "),
                         id: "arXiv:" + id,
                         info: year + ", " + "ArXiv",
@@ -89,7 +87,7 @@ class Main extends React.Component {
                 }
             });
             this.setState({
-                paperList: paperList,
+                searchResultList: searchResultList,
                 referenceList: [],
                 citationList: [],
             });
@@ -134,29 +132,29 @@ class Main extends React.Component {
             }
             makeList(response.data.references, referenceList);
             makeList(response.data.citations, citationList);
-            var paperList = [...this.state.paperList];
+            var searchResultList = [...this.state.searchResultList];
             var paper = {
                 title: title.replace("\n", " "),
                 id: id,
                 info: info,
             };
             if (id.includes("arXiv:")) {
-                paperList = [paper];
+                searchResultList = [paper];
             }
             else {
                 var i = 0;
-                for (; i < paperList.length; i++) {
-                    if (paperList[i].id == id) {
+                for (; i < searchResultList.length; i++) {
+                    if (searchResultList[i].id == id) {
                         break;
                     }
                 }
-                paperList = paperList.slice(0, i);
-                paperList.push(paper);
+                searchResultList = searchResultList.slice(0, i);
+                searchResultList.push(paper);
             }
             this.setState({
                 referenceList: referenceList,
                 citationList: citationList,
-                paperList: paperList,
+                searchResultList: searchResultList,
             });
         })
         .catch(error => {
@@ -186,7 +184,7 @@ class Main extends React.Component {
         const { classes } = this.props;
         var checkedList = this.state.checkedList.map(title => (
             <ListItem>
-              <ListItemText primary={title} />
+              <ListItemText primary={title} key={title} />
             </ListItem>
         ));
         var appBar = (
@@ -224,59 +222,35 @@ class Main extends React.Component {
                 updateQuery={this.updateQuery}
             />
         );
-        var paperList = this.state.paperList.length == 0 ? null : (
+        var searchResultList = this.state.searchResultList.length == 0 ? null : (
             <PaperList
-                paperList={this.state.paperList}
+                list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.handleToggleChecked}
                 checkedList={this.state.checkedList}
             />
         );
-        var referenceList = (
-            <Grid item xs={12} sm={6}>
-                <Paper className={classes.paper}>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={this.state.onlyInfluentialRefs}
-                                onChange={this.updateOnlyInfluential("onlyInfluentialRefs")}
-                                color="primary"
-                            />
-                        }
-                        label="Only influential"
-                    />
-                    <ReferenceList
-                        referenceList={this.state.citationList}
-                        handleChooseTitle={this.handleChooseTitle}
-                        onlyInfluential={this.state.onlyInfluentialRefs}
-                        handleToggleChecked={this.handleToggleChecked}
-                        checkedList={this.state.checkedList}
-                    />
-                </Paper>
-            </Grid>
+        var referenceList = this.state.referenceList.length == 0 ? null : (
+            <DetailedPaperList
+                title="References"
+                onlyInfluential={this.state.onlyInfluentialRefs}
+                updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialRefs")}
+                list={this.state.referenceList}
+                handleChooseTitle={this.handleChooseTitle}
+                handleToggleChecked={this.handleToggleChecked}
+                checkedList={this.state.checkedList}
+            />
         );
-        var citationList = (
-            <Grid item xs={12} sm={6}>
-                <Paper className={classes.paper}>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={this.state.onlyInfluentialCits}
-                                onChange={this.updateOnlyInfluential("onlyInfluentialCits")}
-                                color="primary"
-                            />
-                        }
-                        label="Only influential"
-                    />
-                    <ReferenceList
-                        referenceList={this.state.referenceList}
-                        handleChooseTitle={this.handleChooseTitle}
-                        onlyInfluential={this.state.onlyInfluentialCits}
-                        handleToggleChecked={this.handleToggleChecked}
-                        checkedList={this.state.checkedList}
-                    />
-                </Paper>
-            </Grid>
+        var citationList = this.state.citationList.length == 0 ? null : (
+            <DetailedPaperList
+                title="Citations"
+                onlyInfluential={this.state.onlyInfluentialCits}
+                updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialCits")}
+                list={this.state.citationList}
+                handleChooseTitle={this.handleChooseTitle}
+                handleToggleChecked={this.handleToggleChecked}
+                checkedList={this.state.checkedList}
+            />
         );
         return (
             <div className={classes.root}>
@@ -284,7 +258,7 @@ class Main extends React.Component {
                     {appBar}
                     {drawer}
                     {userInput}
-                    {paperList}
+                    {searchResultList}
                     {referenceList}
                     {citationList}
                 </Grid>
