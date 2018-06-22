@@ -12,6 +12,11 @@ app.use(express.static(path.join(__dirname ,'public')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+// for database
+const con = mongoose.createConnection('mongodb://localhost/paperQuery');
+const UserSocket = require('./src/database/UserSocket.js');
+const userSocket = new UserSocket(con);
+
 // render an API index page
 app.post('/user/signup', function(req, res){
 	var user = {
@@ -20,7 +25,7 @@ app.post('/user/signup', function(req, res){
 		updateTime: req.body.updateTime
 	}
 	// should be modified to store new user in DB
-	res.send(user);
+	userSocket.storeUser(user, res);
 });
 app.post('/user/login', function(req, res){
 	var user = {
@@ -29,7 +34,7 @@ app.post('/user/login', function(req, res){
 		updateTime: req.body.updateTime
 	}
 	// should be modified to check users in DB
-	res.send(user);
+	userSocket.checkUser(user, res);
 });
 app.get('/*', function(req, res){
 	res.sendFile(path.join(__dirname, '/public/index.html'), function(err){
