@@ -16,6 +16,8 @@ app.use(bodyParser.json());
 const con = mongoose.createConnection('mongodb://localhost/paperQuery');
 const UserSocket = require('./src/database/UserSocket.js');
 const userSocket = new UserSocket(con);
+const FavoriteSocket = require('./src/database/FavoriteSocket.js');
+const favoriteSocket = new FavoriteSocket(con);
 
 // render an API index page
 app.post('/user/signup', function(req, res){
@@ -35,6 +37,22 @@ app.post('/user/login', function(req, res){
 	}
 	// should be modified to check users in DB
 	userSocket.checkUser(user, res);
+});
+app.post('/favorite/add', function(req, res){
+	var favorite = {
+		title: req.body.title,
+		id: req.body.id,
+		user: req.body.user,
+	}
+	favoriteSocket.addFavorite(favorite, res);
+});
+app.post('/favorite/remove', function(req, res){
+	var favorite = {
+		title: req.body.title,
+		id: req.body.id,
+		user: req.body.user,
+	}
+	favoriteSocket.removeFavorite(favorite, res);
 });
 app.get('/*', function(req, res){
 	res.sendFile(path.join(__dirname, '/public/index.html'), function(err){

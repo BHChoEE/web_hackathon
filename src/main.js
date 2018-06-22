@@ -166,12 +166,36 @@ class Main extends React.Component {
         var newCheckedList = [...Object.keys(this.state.checkedList)];
         if (newCheckedList[title] === undefined) {
             newCheckedList[title] = id;
+            // save favorite to db
+            axios.post('/favorite/add', {
+                title: title,
+                id: id,
+                user: this.state.username
+            })
+            .then(res => {
+                this.setState({checkedList: newCheckedList});
+            })
+            .catch(err => {
+                console.log(err);
+            })
         }
         else {
             delete newCheckedList[title];
+            // delete favorite from db
+            axios.post('/favorite/remove', {
+                title: title,
+                id: id,
+                user: this.state.username
+            })
+            .then(res => {
+                this.setState({checkedList: newCheckedList});
+            })
+            .catch(err => {
+                console.log(err);
+            })
         }
         
-        this.setState({checkedList: newCheckedList});
+        
     }
     
     toggleDrawer = (state) => () => {
