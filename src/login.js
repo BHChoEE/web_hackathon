@@ -66,6 +66,14 @@ class Login extends React.Component{
     SignUpPage = e => {
         this.props.history.push('/signup');
     }
+    GuestLogIn = e => {
+        var userInfo  = {
+            "username": "GUEST"
+        };
+        sessionStorage.setItem('GUEST', JSON.stringify(userInfo));
+        window.alert(userInfo['username']+': Log In Successfully!');
+        this.props.history.push('/main');
+    }
     render(){
         return(
             <Dialog open style={{backgroundImage:'url("/assets/login.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
@@ -81,6 +89,7 @@ class Login extends React.Component{
                     value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} fullWidth />
                 </DialogContent>
                 <DialogActions>
+                    <Button onClick={this.GuestLogIn} color="secondary"> Guest </Button>
                     <Button onClick={this.SignUpPage} color="secondary"> Sign Up </Button>
                     <Button onClick={this.LogInPage} color="primary"> Log In </Button>
                 </DialogActions>

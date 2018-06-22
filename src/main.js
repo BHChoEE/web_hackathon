@@ -41,6 +41,7 @@ class Main extends React.Component {
     constructor() {
         super();
         this.state = {
+            username: "",
             query: "",
             paperList: [],
             referenceList: [],
@@ -56,7 +57,16 @@ class Main extends React.Component {
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
         this.handleToggleChecked = this.handleToggleChecked.bind(this);
     }
-
+    componentDidMount(){
+        var retrievedObject = sessionStorage.getItem('userInfo');
+        if(retrievedObject == null){
+            var username = "GUEST"
+        } else {
+            retrievedObject = JSON.parse(retrievedObject);
+            var username = retrievedObject.username;
+        }
+        this.setState({username: username});
+    }
     sendQuery() {
         var query = this.state.query;
         axios.get("https://export.arxiv.org/api/query?search_query=" + query)
