@@ -25,9 +25,9 @@ class FavoriteSocket {
     removeFavorite(data, res) {
         const query = {id: data.id, user: data.user};
         Favorite.findOneAndRemove(query, function(err, result){
-            if(error) {
-                console.log(error);
-                res.send(error);
+            if(err) {
+                console.log(err);
+                res.send(err);
                 return;
             } else {
                 console.log(result);

@@ -163,7 +163,7 @@ class Main extends React.Component {
     }
 
     handleToggleChecked = (title, id) => () => {
-        var newCheckedList = [...Object.keys(this.state.checkedList)];
+        var newCheckedList = {...this.state.checkedList};
         if (newCheckedList[title] === undefined) {
             newCheckedList[title] = id;
             // save favorite to db
