@@ -27,7 +27,7 @@ class PaperItem extends React.Component {
                 <ListItemText inset primary={this.props.title} secondary={this.props.info} />
                 <ListItemSecondaryAction>
                     <Checkbox
-                        onChange={this.props.handleToggleChecked(this.props.title)}
+                        onChange={this.props.handleToggleChecked(this.props.title, this.props.id)}
                         checked={this.props.checked}
                     />
                 </ListItemSecondaryAction>

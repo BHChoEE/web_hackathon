@@ -46,7 +46,7 @@ class Main extends React.Component {
             citationList: [],
             onlyInfluentialRefs: false,
             onlyInfluentialCits: false,
-            checkedList: [],
+            checkedList: {},
             drawerOpen: false,
         }
         this.updateQuery = this.updateQuery.bind(this);
@@ -162,13 +162,13 @@ class Main extends React.Component {
         });
     }
 
-    handleToggleChecked = title => () => {
-        var index = this.state.checkedList.indexOf(title);
-        var newCheckedList = [...this.state.checkedList];
-        if (index === -1) {
-            newCheckedList.push(title);
-        } else {
-            newCheckedList.splice(index, 1);
+    handleToggleChecked = (title, id) => () => {
+        var newCheckedList = [...Object.keys(this.state.checkedList)];
+        if (newCheckedList[title] === undefined) {
+            newCheckedList[title] = id;
+        }
+        else {
+            delete newCheckedList[title];
         }
         
         this.setState({checkedList: newCheckedList});
@@ -182,7 +182,7 @@ class Main extends React.Component {
     
     render() {
         const { classes } = this.props;
-        var checkedList = this.state.checkedList.map(title => (
+        var checkedList = Object.keys(this.state.checkedList).map(title => (
             <ListItem>
               <ListItemText primary={title} key={title} />
             </ListItem>

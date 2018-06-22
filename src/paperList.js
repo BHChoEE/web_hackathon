@@ -32,7 +32,7 @@ class PaperList extends React.Component {
                 id={paper.id}
                 key={paper.id}
                 info={paper.info}
-                checked={this.props.checkedList.indexOf(paper.title) !== -1}
+                checked={this.props.checkedList[paper.title] !== undefined}
                 isInfluential={paper.isInfluential}
                 handleQuery={this.handleQuery}
                 handleToggleChecked={this.props.handleToggleChecked}
