@@ -46,7 +46,7 @@ class Main extends React.Component {
             citationList: [],
             onlyInfluentialRefs: false,
             onlyInfluentialCits: false,
-            checkedList: {},
+            favoritePapers: {},
             drawerOpen: false,
         }
         this.updateQuery = this.updateQuery.bind(this);
@@ -63,7 +63,24 @@ class Main extends React.Component {
             retrievedObject = JSON.parse(retrievedObject);
             var username = retrievedObject.username;
         }
-        this.setState({username: username});
+        this.setState({username: username}, () => {
+            // if username not GUEST, load back all favorite paper to favoritePapers
+            if(this.state.username != "GUEST"){
+                axios.post('/favorite/all', {
+                    user: this.state.username
+                })
+                .then((res)=> {
+                    var newFavoritePapers = {}
+                    for(let i = 0 ; i < res['data'].length; ++i)
+                        newFavoritePapers[ res['data'][i].title ] = res['data'][i].id
+                    this.setState({favoritePapers: newFavoritePapers});
+                })
+                .catch(function(error){
+                    console.log(error);
+                })
+            }
+        });
+        
     }
     sendQuery() {
         var query = this.state.query;
@@ -163,9 +180,9 @@ class Main extends React.Component {
     }
 
     handleToggleChecked = (title, id) => () => {
-        var newCheckedList = {...this.state.checkedList};
-        if (newCheckedList[title] === undefined) {
-            newCheckedList[title] = id;
+        var newFavoritePapers = {...this.state.favoritePapers};
+        if (newFavoritePapers[title] === undefined) {
+            newFavoritePapers[title] = id;
             // save favorite to db
             axios.post('/favorite/add', {
                 title: title,
@@ -173,14 +190,14 @@ class Main extends React.Component {
                 user: this.state.username
             })
             .then(res => {
-                this.setState({checkedList: newCheckedList});
+                this.setState({favoritePapers: newFavoritePapers});
             })
             .catch(err => {
                 console.log(err);
             })
         }
         else {
-            delete newCheckedList[title];
+            delete newFavoritePapers[title];
             // delete favorite from db
             axios.post('/favorite/remove', {
                 title: title,
@@ -188,7 +205,7 @@ class Main extends React.Component {
                 user: this.state.username
             })
             .then(res => {
-                this.setState({checkedList: newCheckedList});
+                this.setState({favoritePapers: newFavoritePapers});
             })
             .catch(err => {
                 console.log(err);
@@ -206,7 +223,7 @@ class Main extends React.Component {
     
     render() {
         const { classes } = this.props;
-        var checkedList = Object.keys(this.state.checkedList).map(title => (
+        var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
             <ListItem>
               <ListItemText primary={title} key={title} />
             </ListItem>
@@ -233,7 +250,7 @@ class Main extends React.Component {
                 >
                     <div className={classes.drawer}>
                         <List>
-                            {checkedList}
+                            {favoritePapers}
                         </List>
                     </div>
                 </div>
@@ -251,7 +268,7 @@ class Main extends React.Component {
                 list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.handleToggleChecked}
-                checkedList={this.state.checkedList}
+                favoritePapers={this.state.favoritePapers}
             />
         );
         var referenceList = this.state.referenceList.length == 0 ? null : (
@@ -262,7 +279,7 @@ class Main extends React.Component {
                 list={this.state.referenceList}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.handleToggleChecked}
-                checkedList={this.state.checkedList}
+                favoritePapers={this.state.favoritePapers}
             />
         );
         var citationList = this.state.citationList.length == 0 ? null : (
@@ -273,7 +290,7 @@ class Main extends React.Component {
                 list={this.state.citationList}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.handleToggleChecked}
-                checkedList={this.state.checkedList}
+                favoritePapers={this.state.favoritePapers}
             />
         );
         return (

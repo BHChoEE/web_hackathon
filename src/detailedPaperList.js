@@ -33,7 +33,7 @@ class DetailedPaperList extends React.Component {
                         handleChooseTitle={this.props.handleChooseTitle}
                         onlyInfluential={this.props.onlyInfluential}
                         handleToggleChecked={this.props.handleToggleChecked}
-                        checkedList={this.props.checkedList}
+                        favoritePapers={this.props.favoritePapers}
                     />
                 </Paper>
             </Grid>

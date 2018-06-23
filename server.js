@@ -54,6 +54,10 @@ app.post('/favorite/remove', function(req, res){
 	}
 	favoriteSocket.removeFavorite(favorite, res);
 });
+app.post('/favorite/all', function(req, res){
+	const user = req.body.user;
+	favoriteSocket.loadFavoriteList(user, res);
+})
 app.get('/*', function(req, res){
 	res.sendFile(path.join(__dirname, '/public/index.html'), function(err){
 		if(err){res.status(500).send(err);}

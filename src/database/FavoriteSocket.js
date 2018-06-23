@@ -4,21 +4,30 @@ var Favorite = null;
 
 class FavoriteSocket {
     constructor(con) {
-        Favorite= con.model('Favorite', FavoriteSchema);
+        Favorite = con.model('Favorite', FavoriteSchema);
     }
     addFavorite(data, res) {
-        var newFavorite = new Favorite({
+        var favorite = {
             title: data.title,
             id: data.id,
             user: data.user
-        });
-        newFavorite.save(function(err, data){
-            if(err){
-                console.log(err);
-                res.send(err);
+        };
+        var query = {
+            id: data.id,
+            user: data.user
+        };
+        var options = {
+            upsert: true,
+            new: true,
+            setDefaultOnInsert: true
+        };
+        Favorite.findOneAndUpdate(query, favorite, options, function(error, result){
+            if (error) {
+                console.log(error);
+                res.send(error);
+                return;
             } else {
-                console.log(data);
-                res.send(data)
+                res.send(result);
             }
         });
     };
@@ -34,7 +43,18 @@ class FavoriteSocket {
                 res.send(result);
             }
 
-        })
-    }
+        });
+    };
+    loadFavoriteList(user, res){
+        Favorite.find({user: user}, function(error, favorites){
+            if (error) {
+                console.log(error);
+                res.send(error);
+                return;
+            } else {
+                res.send(favorites);
+            }
+        });
+    };
 }
 module.exports = FavoriteSocket;
