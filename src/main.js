@@ -8,15 +8,15 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import StarIcon from '@material-ui/icons/Star';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import { ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import { ListItem, ListItemText } from '@material-ui/core';
 const JSSoup = require('jssoup').default;
 
 const styles = {
@@ -48,6 +48,7 @@ class Main extends React.Component {
             onlyInfluentialCits: false,
             favoritePapers: {},
             drawerOpen: false,
+            display: true
         }
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
@@ -216,6 +217,9 @@ class Main extends React.Component {
         });
     }
     
+    handleSwitchChange = event => {
+        this.setState({display: event.target.checked});
+    }
     render() {
         const { classes } = this.props;
         var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
@@ -223,6 +227,7 @@ class Main extends React.Component {
               <ListItemText primary={title} key={title} />
             </ListItem>
         ));
+        var display = this.state.display ? "Node":"List";
         var appBar = (
             <AppBar style={{position: "fixed"}}>
                 <Toolbar>
@@ -232,6 +237,7 @@ class Main extends React.Component {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
+                    <FormControlLabel control={<Switch checked={this.state.display} onChange={this.handleSwitchChange} value="display" color="secondary"/>} label={"Display Mode: "+display}/>
                 </Toolbar>
             </AppBar>
         );
@@ -243,6 +249,10 @@ class Main extends React.Component {
                     onClick={this.toggleDrawer(false)}
                     onKeyDown={this.toggleDrawer(false)}
                 >
+                        
+                    <Typography variant="title" color="inherit" className={classes.flex}>
+                        <StarIcon />   Favorite Papers
+                    </Typography>
                     <div className={classes.drawer}>
                         <List>
                             {favoritePapers}
