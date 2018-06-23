@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+const UserSocket = require('./src/database/UserSocket.js');
+const FavoriteSocket = require('./src/database/FavoriteSocket.js');
 
 // setup server
 const app = express();
@@ -14,55 +16,58 @@ app.use(bodyParser.json());
 
 // for database
 const con = mongoose.createConnection('mongodb://localhost/paperQuery');
-const UserSocket = require('./src/database/UserSocket.js');
 const userSocket = new UserSocket(con);
-const FavoriteSocket = require('./src/database/FavoriteSocket.js');
 const favoriteSocket = new FavoriteSocket(con);
 
-// render an API index page
-app.post('/user/signup', function(req, res){
+app.post('/user/signup', (req, res) => {
 	var user = {
 		username: req.body.username,
 		password: req.body.password,
 		updateTime: req.body.updateTime
-	}
-	// should be modified to store new user in DB
+	};
 	userSocket.storeUser(user, res);
 });
-app.post('/user/login', function(req, res){
+
+app.post('/user/login', (req, res) => {
 	var user = {
 		username: req.body.username,
 		password: req.body.password,
 		updateTime: req.body.updateTime
-	}
-	// should be modified to check users in DB
+	};
 	userSocket.checkUser(user, res);
 });
-app.post('/favorite/add', function(req, res){
+
+app.post('/favorite/add', (req, res) => {
 	var favorite = {
 		title: req.body.title,
 		id: req.body.id,
-		user: req.body.user,
-	}
+		username: req.body.username,
+	};
 	favoriteSocket.addFavorite(favorite, res);
 });
-app.post('/favorite/remove', function(req, res){
+
+app.post('/favorite/remove', (req, res) => {
 	var favorite = {
 		title: req.body.title,
 		id: req.body.id,
-		user: req.body.user,
-	}
+		username: req.body.username,
+	};
 	favoriteSocket.removeFavorite(favorite, res);
 });
-app.post('/favorite/all', function(req, res){
+
+app.post('/favorite/all', (req, res) => {
 	const user = req.body.user;
 	favoriteSocket.loadFavoriteList(user, res);
-})
-app.get('/*', function(req, res){
-	res.sendFile(path.join(__dirname, '/public/index.html'), function(err){
-		if(err){res.status(500).send(err);}
+});
+
+app.get('/*', (req, res) => {
+	res.sendFile(path.join(__dirname, '/public/index.html'), (err) => {
+		if (err) {
+			res.status(500).send(err);
+		}
 	});
 });
 
-server.listen(3000);
-console.log(`Started on port 3000`);
+const port = 3000;
+server.listen(port);
+console.log(`Started on port ${port}`);

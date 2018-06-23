@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const favoriteSchema = mongoose.Schema({
     title: String,
     id: String,
-    user: String
+    username: String
 })
 
 module.exports = favoriteSchema;

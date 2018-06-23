@@ -1,14 +1,15 @@
 import React from 'react';
 import {Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button} from '@material-ui/core';
 import axios from 'axios';
-class Login extends React.Component{
-    constructor(props){
+
+class Login extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
             field_user: "",
             field_pwd: "",
             error: false
-        }
+        };
         document.title = "Log In";
     }
     componentWillMount = () => {
@@ -27,7 +28,7 @@ class Login extends React.Component{
     };
     LogInPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
-        if(this.state.field_user.match(re) === null){
+        if (this.state.field_user.match(re) === null) {
             window.alert('Username must contain only english and number!');
             this.setState({
                 error:true,
@@ -41,8 +42,8 @@ class Login extends React.Component{
             password: this.state.field_pwd,
             updateTime: Date.now()
         })
-        .then( (res) => {
-            if(res.data != 'not found'){
+        .then(res => {
+            if (res.data != 'not found') {
                 sessionStorage.clear();
                 var userInfo = {
                     "username": this.state.field_user 
@@ -50,7 +51,8 @@ class Login extends React.Component{
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
                 window.alert(userInfo['username']+': Log In Successfully!');
                 this.props.history.push('/main');
-            } else {
+            }
+            else {
                 window.alert(res.data);
                 this.setState({
                     error: true,
@@ -59,13 +61,15 @@ class Login extends React.Component{
                 });
             }
         })
-        .catch(function(error) {
+        .catch(error => {
             console.log(error);
-        })
+        });
     };
+
     SignUpPage = e => {
         this.props.history.push('/signup');
     }
+
     GuestLogIn = e => {
         var userInfo  = {
             "username": "GUEST"
@@ -74,8 +78,9 @@ class Login extends React.Component{
         window.alert(userInfo['username']+': Log In Successfully!');
         this.props.history.push('/main');
     }
-    render(){
-        return(
+
+    render() {
+        return (
             <Dialog open style={{backgroundImage:'url("/assets/login.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
                 <DialogTitle> Log In </DialogTitle>
                 <DialogContent>
@@ -97,4 +102,5 @@ class Login extends React.Component{
         );
     }
 }
+
 export default Login;

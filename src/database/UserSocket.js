@@ -4,43 +4,43 @@ const mongoose = require('mongoose');
 var User = null;
 
 class UserSocket {
-    constructor(con){
+    constructor(con) {
         User = con.model('User', UserSchema);
     }
-    // for storing user data
+
     storeUser(data, res) {
         var newUser = new User({
             username: data.username,
             updateTime: data.updateTime
         });
-        newUser.save(function(err, data) {
-            if(err){
+        newUser.save((err, data) => {
+            if (err) {
                 console.log(err);
                 res.send(err);
-            } else {
+            }
+            else {
                 console.log(data);
                 res.send(data);
             }
         });
     };
-    // for log in user data
+
     checkUser(data, res) {
-        var myUser = new User({
-            username: data.username,
-            updateTime: data.updateTime
-        });
-        User.find({'username': myUser.username}, function(err, user){
-            if(err) {
+        User.find({'username': data.username}, (err, user) => {
+            if (err) {
                 console.log(err);
                 res.send(err);
-            } else if(user.length == 1) {
+            }
+            else if (user.length == 1) {
                 console.log(user);
                 res.redirect('/main');
-            } else {
-                console.log('not found');
-                res.send('not found');
+            }
+            else {
+                console.log('user not found');
+                res.send('user not found');
             }
         });
     };
 }
+
 module.exports = UserSocket;

@@ -55,13 +55,16 @@ class Main extends React.Component {
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
         this.handleToggleChecked = this.handleToggleChecked.bind(this);
     }
-    componentDidMount(){
+    
+    componentDidMount() {
+        var username;
         var retrievedObject = sessionStorage.getItem('userInfo');
-        if(retrievedObject == null){
-            var username = "GUEST"
-        } else {
+        if (retrievedObject == null) {
+            username = "GUEST";
+        }
+        else {
             retrievedObject = JSON.parse(retrievedObject);
-            var username = retrievedObject.username;
+            username = retrievedObject.username;
         }
         this.setState({username: username}, () => {
             // if username not GUEST, load back all favorite paper to favoritePapers
@@ -82,6 +85,7 @@ class Main extends React.Component {
         });
         
     }
+    
     sendQuery() {
         var query = this.state.query;
         axios.get("https://export.arxiv.org/api/query?search_query=" + query)
@@ -181,41 +185,32 @@ class Main extends React.Component {
 
     handleToggleChecked = (title, id) => () => {
         var newFavoritePapers = {...this.state.favoritePapers};
+        var action = '';
         if (newFavoritePapers[title] === undefined) {
             newFavoritePapers[title] = id;
             // save favorite to db
-            axios.post('/favorite/add', {
-                title: title,
-                id: id,
-                user: this.state.username
-            })
-            .then(res => {
-                this.setState({favoritePapers: newFavoritePapers});
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            action = 'add';
         }
         else {
             delete newFavoritePapers[title];
             // delete favorite from db
-            axios.post('/favorite/remove', {
-                title: title,
-                id: id,
-                user: this.state.username
-            })
-            .then(res => {
-                this.setState({favoritePapers: newFavoritePapers});
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            action = 'remove';
         }
         
-        
+        axios.post('/favorite/' + action, {
+            title: title,
+            id: id,
+            username: this.state.username
+        })
+        .then(res => {
+            this.setState({favoritePapers: newFavoritePapers});
+        })
+        .catch(err => {
+            console.log(err);
+        });
     }
     
-    toggleDrawer = (state) => () => {
+    toggleDrawer = state => () => {
         this.setState({
             drawerOpen: state,
         });

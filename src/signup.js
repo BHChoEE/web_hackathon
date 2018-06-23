@@ -1,8 +1,9 @@
 import React from 'react';
 import {Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button} from '@material-ui/core';
 import axios from 'axios';
-class SignUp extends React.Component{
-    constructor(props){
+
+class SignUp extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
             field_user: "",
@@ -11,6 +12,7 @@ class SignUp extends React.Component{
         };
         document.title = "Sign Up";
     }
+
     componentWillMount = () => {
         var retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
@@ -19,18 +21,20 @@ class SignUp extends React.Component{
             this.props.history.push('/main/'+username);
         }
     };
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
             error: false
         });
     };
+
     SignUpPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
-        if(this.state.field_user.match(re) === null){
+        if (this.state.field_user.match(re) === null){
             window.alert('Username must contain only english and number!');
             this.setState({
-                error:true,
+                error: true,
                 field_user: ""
             });
             return;
@@ -41,28 +45,31 @@ class SignUp extends React.Component{
             password: this.state.field_pwd,
             updateTime: Date()
         })
-        .then( (res) => {
-            if (res.data._message == null){
+        .then(res => {
+            if (res.data._message == null) {
                 var username = res.data.username;
                 window.alert('Sign Up successfully!' + username);
                 this.LogInPage();
-            } else {
-                window.alert(res.data._message + 'already used or invalid');
+            }
+            else {
+                window.alert(res.data._message + ': already used or invalid');
                 this.setState({
                     error: true,
                     field_user: "",
                 });
             }
         })
-        .catch(function(error) {
+        .catch(error => {
             console.log(error);
-        })
+        });
     };
+
     LogInPage = e => {
         this.props.history.push('/login');
     }
-    render(){
-        return(
+
+    render() {
+        return (
             <Dialog open style= {{backgroundImage:'url("/assets/SignIn.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
                 <DialogTitle>Sign Up</DialogTitle>
                 <DialogContent>
@@ -83,4 +90,5 @@ class SignUp extends React.Component{
         );
     }
 }
+
 export default SignUp;
