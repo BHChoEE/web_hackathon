@@ -61,6 +61,17 @@ class SignUp extends React.Component{
     LogInPage = e => {
         this.props.history.push('/login');
     }
+    handleKeyPress = e => {
+        if(e.key=="Enter"){
+            if(this.state.field_user == ""){
+                window.alert("Username cannot be empty!")
+            } else if (this.state.field_pwd == ""){
+                window.alert("Password cannot be empty!")
+            } else {
+                this.SignUpPage(e);
+            }
+        }
+    };
     render(){
         return(
             <Dialog open style= {{backgroundImage:'url("/assets/SignIn.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
@@ -68,12 +79,12 @@ class SignUp extends React.Component{
                 <DialogContent>
                     <DialogContentText>Please Enter Your Name</DialogContentText>
                     <TextField error={this.state.error} margin="dense" id="username" label="Name" type="username" autoFocus
-                    value={this.state.field_user} onChange={this.handleChange('field_user')} fullWidth />
+                    value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
                 </DialogContent>
                 <DialogContent>
                     <DialogContentText>Please Enter Your Password</DialogContentText>
                     <TextField error={this.state.error} margin="dense" id="password" label="Password" type="password"
-                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} fullWidth />
+                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.LogInPage} color="secondary">Return</Button>

@@ -74,6 +74,17 @@ class Login extends React.Component{
         window.alert(userInfo['username']+': Log In Successfully!');
         this.props.history.push('/main');
     }
+    handleKeyPress = e => {
+        if(e.key=="Enter"){
+            if(this.state.field_user == ""){
+                window.alert("Username cannot be empty!")
+            } else if (this.state.field_pwd == ""){
+                window.alert("Password cannot be empty!")
+            } else {
+                this.LogInPage(e);
+            }
+        }
+    };
     render(){
         return(
             <Dialog open style={{backgroundImage:'url("/assets/login.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
@@ -81,12 +92,12 @@ class Login extends React.Component{
                 <DialogContent>
                     <DialogContentText> Please Enter Your Name </DialogContentText>
                     <TextField error={this.state.error} margin="dense" id="username" label="name" type="username" autoFocus
-                    value={this.state.field_user} onChange={this.handleChange('field_user')} fullWidth />
+                    value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
                 </DialogContent>
                 <DialogContent>
                     <DialogContentText> Please Enter Your Password </DialogContentText>
                     <TextField error={this.state.error} margin="dense" id="password" label="password" type="password"
-                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} fullWidth />
+                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.GuestLogIn} color="secondary"> Guest </Button>
