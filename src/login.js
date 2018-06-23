@@ -80,12 +80,12 @@ class Login extends React.Component{
                 <DialogTitle> Log In </DialogTitle>
                 <DialogContent>
                     <DialogContentText> Please Enter Your Name </DialogContentText>
-                    <TextField autoFocus error={this.state.error} margin="dense" id="username"label="name"type="username"
+                    <TextField error={this.state.error} margin="dense" id="username" label="name" type="username" autoFocus
                     value={this.state.field_user} onChange={this.handleChange('field_user')} fullWidth />
                 </DialogContent>
                 <DialogContent>
                     <DialogContentText> Please Enter Your Password </DialogContentText>
-                    <TextField autoFocus error={this.state.error} margin="dense" id="password"label="password"type="password"
+                    <TextField error={this.state.error} margin="dense" id="password" label="password" type="password"
                     value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} fullWidth />
                 </DialogContent>
                 <DialogActions>
