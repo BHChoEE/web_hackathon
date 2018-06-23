@@ -31,8 +31,10 @@
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-graph-vis": "^1.0.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.3.1",
+    "react-tap-event-plugin": "^3.0.3",
     "webpack": "^4.8.3"
   },
   "devDependencies": {

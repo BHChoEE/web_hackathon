@@ -8,7 +8,7 @@ import PaperList from './paperList';
 
 class DetailedPaperList extends React.Component {
     render() {
-        return (
+        return this.props.list.length === 0 ? null : (
             <Grid item xs={12} sm={6}>
                 <Paper>
                     <Grid container justify="center">

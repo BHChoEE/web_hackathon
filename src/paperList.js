@@ -23,6 +23,9 @@ class PaperList extends React.Component {
 
     render() {
         var papers = [...this.props.list];
+        if (papers.length === 0) {
+            return null;
+        }
         if (this.props.onlyInfluential) {
             papers = papers.filter(paper => paper.isInfluential);
         }

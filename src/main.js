@@ -18,6 +18,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { ListItem, ListItemText } from '@material-ui/core';
 const JSSoup = require('jssoup').default;
+import PaperGraph from './paperGraph';
 
 const styles = {
     root: {
@@ -48,7 +49,8 @@ class Main extends React.Component {
             onlyInfluentialCits: false,
             favoritePapers: {},
             drawerOpen: false,
-            display: true
+            display: true,
+            hasChosenTitle: false,
         }
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
@@ -177,6 +179,7 @@ class Main extends React.Component {
                 referenceList: referenceList,
                 citationList: citationList,
                 searchResultList: searchResultList,
+                hasChosenTitle: true,
             });
         })
         .catch(error => {
@@ -268,7 +271,7 @@ class Main extends React.Component {
                 updateQuery={this.updateQuery}
             />
         );
-        var searchResultList = this.state.searchResultList.length == 0 ? null : (
+        var searchResultList = (
             <PaperList
                 list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
@@ -276,7 +279,14 @@ class Main extends React.Component {
                 favoritePapers={this.state.favoritePapers}
             />
         );
-        var referenceList = this.state.referenceList.length == 0 ? null : (
+        var graph = !this.state.hasChosenTitle || this.state.display === false ? null : (
+            <PaperGraph
+                currentPaper={this.state.searchResultList[this.state.searchResultList.length - 1]}
+                referenceList={this.state.referenceList}
+                citationList={this.state.citationList}
+            />
+        );
+        var referenceList = this.state.display === true ? null : (
             <DetailedPaperList
                 title="References"
                 onlyInfluential={this.state.onlyInfluentialRefs}
@@ -287,7 +297,7 @@ class Main extends React.Component {
                 favoritePapers={this.state.favoritePapers}
             />
         );
-        var citationList = this.state.citationList.length == 0 ? null : (
+        var citationList = this.state.display === true ? null : (
             <DetailedPaperList
                 title="Citations"
                 onlyInfluential={this.state.onlyInfluentialCits}
@@ -305,8 +315,9 @@ class Main extends React.Component {
                     {drawer}
                     {userInput}
                     {searchResultList}
-                    {referenceList}
                     {citationList}
+                    {referenceList}
+                    {graph}
                 </Grid>
             </div>
         );
