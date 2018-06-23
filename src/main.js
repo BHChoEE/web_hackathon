@@ -223,8 +223,8 @@ class Main extends React.Component {
     render() {
         const { classes } = this.props;
         var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
-            <ListItem>
-              <ListItemText primary={title} key={title} />
+            <ListItem key={title}>
+              <ListItemText primary={title} />
             </ListItem>
         ));
         var display = this.state.display ? "Node":"List";
