@@ -229,7 +229,7 @@ class Main extends React.Component {
             </ListItem>
         ));
         var appBar = (
-            <AppBar position="static">
+            <AppBar style={{position: "fixed"}}>
                 <Toolbar>
                     <IconButton className={classes.menuButton} onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
                         <MenuIcon />
@@ -295,8 +295,8 @@ class Main extends React.Component {
         );
         return (
             <div className={classes.root}>
-                <Grid container spacing={24}>
-                    {appBar}
+                {appBar}
+                <Grid container spacing={24} style={{marginTop: 72}}>
                     {drawer}
                     {userInput}
                     {searchResultList}
