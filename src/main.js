@@ -20,6 +20,9 @@ import Switch from '@material-ui/core/Switch';
 import { ListItem, ListItemText } from '@material-ui/core';
 const JSSoup = require('jssoup').default;
 import PaperGraph from './paperGraph';
+import FormLabel from '@material-ui/core/FormLabel';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
 
 const styles = {
     root: {
@@ -50,7 +53,7 @@ class Main extends React.Component {
             onlyInfluentialCits: false,
             favoritePapers: {},
             drawerOpen: false,
-            display: true,
+            displayMode: "List",
             hasChosenTitle: false,
         }
         this.updateQuery = this.updateQuery.bind(this);
@@ -225,9 +228,10 @@ class Main extends React.Component {
         window.open(url, "_blank");
     }
     
-    handleSwitchChange = event => {
-        this.setState({display: event.target.checked});
+    handleModeChange = event => {
+        this.setState({displayMode: event.target.value});
     }
+
     render() {
         const { classes } = this.props;
         var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
@@ -235,7 +239,8 @@ class Main extends React.Component {
               <ListItemText primary={title} />
             </ListItem>
         ));
-        var display = this.state.display ? "Node":"List";
+        var displayMode = this.state.displayMode;
+        var currentPaper = this.state.searchResultList[this.state.searchResultList.length - 1];
         var appBar = (
             <AppBar style={{position: "fixed"}}>
                 <Toolbar>
@@ -245,7 +250,19 @@ class Main extends React.Component {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
-                    <FormControlLabel control={<Switch checked={this.state.display} onChange={this.handleSwitchChange} value="display" color="secondary"/>} label={"Display Mode: "+display}/>
+                    <FormLabel>Display mode: &ensp; </FormLabel>
+                    <RadioGroup row aria-label="Display Mode" className={classes.group} value={displayMode} onChange={this.handleModeChange}>
+                        <FormControlLabel
+                            value="List"
+                            control={<Radio />}
+                            label="List"
+                        />
+                        <FormControlLabel
+                            value="Graph"
+                            control={<Radio />}
+                            label="Graph"
+                        />
+                    </RadioGroup>
                     <Grid>
                         <Button  className={classes.button} variant="outlined" onClick={this.searchSS} color="secondary"> 
                             SS<Icon className={classes.rightIcon}>send</Icon>
@@ -262,7 +279,6 @@ class Main extends React.Component {
                     onClick={this.toggleDrawer(false)}
                     onKeyDown={this.toggleDrawer(false)}
                 >
-                        
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         <StarIcon />   Favorite Papers
                     </Typography>
@@ -289,14 +305,14 @@ class Main extends React.Component {
                 favoritePapers={this.state.favoritePapers}
             />
         );
-        var graph = !this.state.hasChosenTitle || this.state.display === false ? null : (
+        var graph = this.state.hasChosenTitle && displayMode === "Graph" ? (
             <PaperGraph
-                currentPaper={this.state.searchResultList[this.state.searchResultList.length - 1]}
+                currentPaper={currentPaper}
                 referenceList={this.state.referenceList}
                 citationList={this.state.citationList}
             />
-        );
-        var referenceList = this.state.display === true ? null : (
+        ) : null;
+        var referenceList = displayMode === "List" ? (
             <DetailedPaperList
                 title="References"
                 onlyInfluential={this.state.onlyInfluentialRefs}
@@ -306,8 +322,8 @@ class Main extends React.Component {
                 handleToggleChecked={this.handleToggleChecked}
                 favoritePapers={this.state.favoritePapers}
             />
-        );
-        var citationList = this.state.display === true ? null : (
+        ) : null;
+        var citationList = displayMode === "List" ? (
             <DetailedPaperList
                 title="Citations"
                 onlyInfluential={this.state.onlyInfluentialCits}
@@ -317,7 +333,7 @@ class Main extends React.Component {
                 handleToggleChecked={this.handleToggleChecked}
                 favoritePapers={this.state.favoritePapers}
             />
-        );
+        ) : null;
         return (
             <div className={classes.root}>
                 {appBar}

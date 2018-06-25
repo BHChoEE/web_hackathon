@@ -3,6 +3,8 @@ import { ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
 import StarIcon from '@material-ui/icons/Star';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
+import Favorite from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 
 class PaperItem extends React.Component {
     constructor(props) {
@@ -29,6 +31,7 @@ class PaperItem extends React.Component {
                     <Checkbox
                         onChange={this.props.handleToggleChecked(this.props.title, this.props.id)}
                         checked={this.props.checked}
+                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                     />
                 </ListItemSecondaryAction>
             </ListItem>
