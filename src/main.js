@@ -14,6 +14,7 @@ import StarIcon from '@material-ui/icons/Star';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
+import {Button, Icon} from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { ListItem, ListItemText } from '@material-ui/core';
@@ -219,6 +220,10 @@ class Main extends React.Component {
             drawerOpen: state,
         });
     }
+    searchSS = e => {
+        var url = "https://www.semanticscholar.org/search?q=" + this.state.query + "&sort=relevance";
+        window.open(url, "_blank");
+    }
     
     handleSwitchChange = event => {
         this.setState({display: event.target.checked});
@@ -241,6 +246,11 @@ class Main extends React.Component {
                         Paper Query
                     </Typography>
                     <FormControlLabel control={<Switch checked={this.state.display} onChange={this.handleSwitchChange} value="display" color="secondary"/>} label={"Display Mode: "+display}/>
+                    <Grid>
+                        <Button  className={classes.button} variant="outlined" onClick={this.searchSS} color="secondary"> 
+                            SS<Icon className={classes.rightIcon}>send</Icon>
+                        </Button>
+                    </Grid>
                 </Toolbar>
             </AppBar>
         );

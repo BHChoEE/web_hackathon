@@ -28,6 +28,11 @@ class DetailedPaperList extends React.Component {
                             label="Only influential"
                         />
                     </Grid>
+                    <Grid container justify="center">
+                        <Typography component="h2">
+                            {"Total Paper Number: "+this.props.list.length}
+                        </Typography>
+                    </Grid>
                     <PaperList
                         list={this.props.list}
                         handleChooseTitle={this.props.handleChooseTitle}

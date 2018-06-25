@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Input, Button, Grid, Icon, withStyles } from '@material-ui/core';
+import { Input, Button, Grid, Icon, withStyles, IconButton } from '@material-ui/core';
 
 const styles = theme => ({
     input: {
@@ -36,7 +36,15 @@ class UserInput extends React.Component {
         }
         this.props.sendQuery();
     }
-
+    searchGoogle = e => {
+        var url = "http://www.google.com/search?q=" + this.props.query;
+        window.open(url, "_blank");
+    }
+    copyContent = e => {
+        document.getElementById("#userInput").select();
+        document.execCommand('copy');
+        window.alert("copied!");
+    }
     handleKeyPress(e) {
         if(e.key == "Enter") {
             this.sendMessage(e);
@@ -47,14 +55,22 @@ class UserInput extends React.Component {
         const { classes } = this.props;
         return (
             <Grid container spacing={24}>
-                <Grid item sm={10}>
-                    <Input placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
+                <Grid item sm={7}>
+                    <Input id="#userInput" placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
                     onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus />
                 </Grid>
                 <Grid item sm={2}>
-                    <Button className={classes.button} variant="outlined" onClick={this.sendMessage} color="primary"> Send
+                    <Button className={classes.button} variant="outlined" onClick={this.sendMessage} color="primary"> Search
                         <Icon className={classes.rightIcon}>send</Icon>
                     </Button>
+                </Grid>
+                <Grid item sm={2}>
+                    <Button  className={classes.button} variant="outlined" onClick={this.searchGoogle} color="secondary"> 
+                        Google <Icon className={classes.rightIcon}>send</Icon>
+                    </Button>
+                </Grid>
+                <Grid item sm={1}>    
+                    <IconButton onClick={this.copyContent} >copy</IconButton>
                 </Grid>
             </Grid>
         );
