@@ -27,7 +27,8 @@ class FavoriteSocket {
                 console.log(error);
                 res.send(error);
                 return;
-            } else {
+            }
+            else {
                 res.send(result);
             }
         });
@@ -48,13 +49,14 @@ class FavoriteSocket {
         });
     };
 
-    loadFavoriteList(user, res){
-        Favorite.find({user: user}, function(error, favorites){
+    loadFavoriteList(username, res) {
+        Favorite.find({username: username}, (error, favorites) => {
             if (error) {
                 console.log(error);
                 res.send(error);
                 return;
-            } else {
+            }
+            else {
                 res.send(favorites);
             }
         });

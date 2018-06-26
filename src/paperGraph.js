@@ -37,7 +37,7 @@ class PaperGraph extends React.Component {
         };
 
         const events = {
-            select: function(event) {
+            select: event => {
                 var { nodes, edges } = event;
             }
         }

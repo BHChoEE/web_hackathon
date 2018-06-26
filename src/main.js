@@ -23,6 +23,7 @@ import PaperGraph from './paperGraph';
 import FormLabel from '@material-ui/core/FormLabel';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
+import FormControl from '@material-ui/core/FormControl';
 
 const styles = {
     root: {
@@ -37,6 +38,10 @@ const styles = {
     },
     drawer: {
         width: 500,
+    },
+    main: {
+        marginLeft: 20,
+        marginRight: 20,
     },
 };
 
@@ -61,6 +66,7 @@ class Main extends React.Component {
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
         this.handleToggleChecked = this.handleToggleChecked.bind(this);
+        this.handleLogInOut = this.handleLogInOut.bind(this);
     }
     
     componentDidMount() {
@@ -77,17 +83,18 @@ class Main extends React.Component {
             // if username not GUEST, load back all favorite paper to favoritePapers
             if(this.state.username != "GUEST"){
                 axios.post('/favorite/all', {
-                    user: this.state.username
+                    username: this.state.username
                 })
-                .then((res)=> {
-                    var newFavoritePapers = {}
-                    for(let i = 0 ; i < res['data'].length; ++i)
-                        newFavoritePapers[ res['data'][i].title ] = res['data'][i].id
+                .then(res => {
+                    var newFavoritePapers = {};
+                    for (let i = 0; i < res['data'].length; i++) {
+                        newFavoritePapers[res['data'][i].title] = res['data'][i].id;
+                    }
                     this.setState({favoritePapers: newFavoritePapers});
                 })
-                .catch(function(error){
+                .catch(error => {
                     console.log(error);
-                })
+                });
             }
         });
         
@@ -223,13 +230,29 @@ class Main extends React.Component {
             drawerOpen: state,
         });
     }
-    searchSS = e => {
-        var url = "https://www.semanticscholar.org/search?q=" + this.state.query + "&sort=relevance";
-        window.open(url, "_blank");
-    }
+
+    // searchSS = e => {
+    //     var url = "https://www.semanticscholar.org/search?q=" + this.state.query + "&sort=relevance";
+    //     window.open(url, "_blank");
+    // }
     
     handleModeChange = event => {
         this.setState({displayMode: event.target.value});
+    }
+
+    handleLogInOut() {
+        if (this.state.username === "GUEST") {
+            // login
+            this.props.history.push('/login');
+        }
+        else {
+            // logout
+            sessionStorage.clear();
+            this.setState({
+                username: "GUEST",
+                favoritePapers: [],
+            });
+        }
     }
 
     render() {
@@ -250,24 +273,14 @@ class Main extends React.Component {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
-                    <FormLabel>Display mode: &ensp; </FormLabel>
-                    <RadioGroup row aria-label="Display Mode" className={classes.group} value={displayMode} onChange={this.handleModeChange}>
-                        <FormControlLabel
-                            value="List"
-                            control={<Radio />}
-                            label="List"
-                        />
-                        <FormControlLabel
-                            value="Graph"
-                            control={<Radio />}
-                            label="Graph"
-                        />
-                    </RadioGroup>
-                    <Grid>
+                    <Button color="inherit" onClick={this.handleLogInOut}>
+                        {this.state.username === "GUEST" ? "Login" : "Logout"}
+                    </Button>
+                    {/* <Grid>
                         <Button  className={classes.button} variant="outlined" onClick={this.searchSS} color="secondary"> 
                             SS<Icon className={classes.rightIcon}>send</Icon>
                         </Button>
-                    </Grid>
+                    </Grid> */}
                 </Toolbar>
             </AppBar>
         );
@@ -276,8 +289,6 @@ class Main extends React.Component {
                 <div
                     tabIndex={0}
                     role="button"
-                    onClick={this.toggleDrawer(false)}
-                    onKeyDown={this.toggleDrawer(false)}
                 >
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         <StarIcon />   Favorite Papers
@@ -296,6 +307,23 @@ class Main extends React.Component {
                 query={this.state.query}
                 updateQuery={this.updateQuery}
             />
+        );
+        var displayModeControl = (
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Display mode</FormLabel>
+                <RadioGroup row aria-label="Display Mode" className={classes.group} value={displayMode} onChange={this.handleModeChange}>
+                    <FormControlLabel
+                        value="List"
+                        control={<Radio />}
+                        label="List"
+                    />
+                    <FormControlLabel
+                        value="Graph"
+                        control={<Radio />}
+                        label="Graph"
+                    />
+                </RadioGroup>
+            </FormControl>
         );
         var searchResultList = (
             <PaperList
@@ -337,14 +365,19 @@ class Main extends React.Component {
         return (
             <div className={classes.root}>
                 {appBar}
-                <Grid container spacing={24} style={{marginTop: 72}}>
+                <div className={classes.main}>
+                <Grid container spacing={24} style={{marginTop: 80}}>
                     {drawer}
-                    {userInput}
+                    <Grid container spacing={24}>
+                        <Grid item sm={10}>{userInput}</Grid>
+                        <Grid item sm={2}>{displayModeControl}</Grid>
+                    </Grid>
                     {searchResultList}
                     {citationList}
                     {referenceList}
                     {graph}
                 </Grid>
+            </div>
             </div>
         );
     }

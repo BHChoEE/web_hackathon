@@ -56,8 +56,8 @@ app.post('/favorite/remove', (req, res) => {
 });
 
 app.post('/favorite/all', (req, res) => {
-	const user = req.body.user;
-	favoriteSocket.loadFavoriteList(user, res);
+	const username = req.body.username;
+	favoriteSocket.loadFavoriteList(username, res);
 });
 
 app.get('/*', (req, res) => {

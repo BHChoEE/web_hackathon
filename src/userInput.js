@@ -55,7 +55,7 @@ class UserInput extends React.Component {
         const { classes } = this.props;
         return (
             <Grid container spacing={24}>
-                <Grid item sm={7}>
+                <Grid item sm={10}>
                     <Input id="#userInput" placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
                     onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus />
                 </Grid>
@@ -64,14 +64,14 @@ class UserInput extends React.Component {
                         <Icon className={classes.rightIcon}>send</Icon>
                     </Button>
                 </Grid>
-                <Grid item sm={2}>
+                {/* <Grid item sm={2}>
                     <Button  className={classes.button} variant="outlined" onClick={this.searchGoogle} color="secondary"> 
                         Google <Icon className={classes.rightIcon}>send</Icon>
                     </Button>
                 </Grid>
                 <Grid item sm={1}>    
                     <IconButton onClick={this.copyContent} >copy</IconButton>
-                </Grid>
+                </Grid> */}
             </Grid>
         );
     }
