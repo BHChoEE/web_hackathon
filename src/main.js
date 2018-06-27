@@ -145,12 +145,8 @@ class Main extends React.Component {
         this.setState({[onlyInfluential]: e.target.checked});
     }
 
-<<<<<<< HEAD
-    handleChooseTitle(title, id, info) {
-        this.setState({progress: true})
-=======
     handleChooseTitle(id) {
->>>>>>> 85ef859310aaa2a40c373ea8bc7ae5b57831a68e
+        this.setState({progress: true})
         axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
@@ -283,13 +279,10 @@ class Main extends React.Component {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
-<<<<<<< HEAD
-                    {this.state.progress && <CircularProgress color="default" size={30}/>}
-=======
+                    {this.state.progress && <CircularProgress color="inherit" size={30}/>}
                     <Button color="inherit" onClick={this.toggleDrawer(true)}>
                         Favorites
                     </Button>
->>>>>>> 85ef859310aaa2a40c373ea8bc7ae5b57831a68e
                     <Button color="inherit" onClick={this.handleLogInOut}>
                         {this.state.username === "GUEST" ? "Login" : "Logout"}
                     </Button>
