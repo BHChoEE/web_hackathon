@@ -19,35 +19,27 @@ class UserInput extends React.Component {
     constructor(props) {
         super(props);
         this.handleInput = this.handleInput.bind(this);
-        this.sendMessage = this.sendMessage.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
-
     }
 
     handleInput(e) {
         this.props.updateQuery(e.target.value);
     }
 
-    sendMessage(e) {
-        e.preventDefault();
-        var qry = this.props.query;
-        if (qry.length == 0){
-            return;
-        }
-        this.props.sendQuery();
-    }
-    searchGoogle = e => {
-        var url = "http://www.google.com/search?q=" + this.props.query;
-        window.open(url, "_blank");
-    }
-    copyContent = e => {
-        document.getElementById("#userInput").select();
-        document.execCommand('copy');
-        window.alert("copied!");
-    }
+    // searchGoogle = e => {
+    //     var url = "http://www.google.com/search?q=" + this.props.query;
+    //     window.open(url, "_blank");
+    // }
+
+    // copyContent = e => {
+    //     document.getElementById("#userInput").select();
+    //     document.execCommand('copy');
+    //     window.alert("copied!");
+    // }
+
     handleKeyPress(e) {
         if(e.key == "Enter") {
-            this.sendMessage(e);
+            this.props.sendQuery();
         }
     }
 
@@ -60,7 +52,8 @@ class UserInput extends React.Component {
                     onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus />
                 </Grid>
                 <Grid item sm={2}>
-                    <Button className={classes.button} variant="outlined" onClick={this.sendMessage} color="primary"> Search
+                    <Button className={classes.button} variant="outlined" onClick={this.props.sendQuery} color="primary" disabled={this.props.query.length === 0}>
+                        Search
                         <Icon className={classes.rightIcon}>send</Icon>
                     </Button>
                 </Grid>

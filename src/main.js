@@ -60,7 +60,7 @@ class Main extends React.Component {
             drawerOpen: false,
             displayMode: "List",
             hasChosenTitle: false,
-        }
+        };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
