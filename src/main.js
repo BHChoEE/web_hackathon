@@ -252,6 +252,7 @@ class Main extends React.Component {
                 username: "GUEST",
                 favoritePapers: [],
             });
+            this.props.history.push('/login');
         }
     }
 

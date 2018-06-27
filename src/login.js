@@ -43,7 +43,7 @@ class Login extends React.Component {
             updateTime: Date.now()
         })
         .then(res => {
-            if (res.data != 'not found') {
+            if (res.data != 'user not found') {
                 sessionStorage.clear();
                 var userInfo = {
                     "username": this.state.field_user 
