@@ -68,6 +68,8 @@ class Main extends React.Component {
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
         this.handleToggleChecked = this.handleToggleChecked.bind(this);
         this.handleLogInOut = this.handleLogInOut.bind(this);
+
+        document.title = "Paper Query";
     }
     
     componentDidMount() {
@@ -88,9 +90,9 @@ class Main extends React.Component {
                 })
                 .then(res => {
                     var newFavoritePapers = {};
-                    for (let i = 0; i < res['data'].length; i++) {
-                        newFavoritePapers[res['data'][i].title] = res['data'][i].id;
-                    }
+                    res['data'].forEach(paper => {
+                        newFavoritePapers[paper.title] = paper.id;
+                    });
                     this.setState({favoritePapers: newFavoritePapers});
                 })
                 .catch(error => {
@@ -117,9 +119,9 @@ class Main extends React.Component {
                     var title = find("title", entry);
                     var id = find("id", entry).split("/abs/")[1].split("v")[0];
                     searchResultList.push({
-                        title: title.replace("\n", " "),
+                        title: title.replace(/\s\s+/g, " "),
                         id: "arXiv:" + id,
-                        info: year + ", " + "ArXiv",
+                        info: year + " ArXiv",
                     });
                 }
             });
@@ -143,18 +145,19 @@ class Main extends React.Component {
         this.setState({[onlyInfluential]: e.target.checked});
     }
 
+<<<<<<< HEAD
     handleChooseTitle(title, id, info) {
         this.setState({progress: true})
+=======
+    handleChooseTitle(id) {
+>>>>>>> 85ef859310aaa2a40c373ea8bc7ae5b57831a68e
         axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
             var citationList = [];
             var makeList = (src, dst) => {
                 src.forEach(paper => {
-                    var info = paper.year;
-                    if (paper.venue) {
-                        info += ", " + paper.venue;
-                    }
+                    var info = [paper.year || "", paper.venue || ""].join(" ");
                     var paperObj = {
                         title: paper.title,
                         id: paper.paperId,
@@ -172,8 +175,9 @@ class Main extends React.Component {
             makeList(response.data.references, referenceList);
             makeList(response.data.citations, citationList);
             var searchResultList = [...this.state.searchResultList];
+            var info = [response.data.year || "", response.data.venue || ""].join(" ")
             var paper = {
-                title: title.replace("\n", " "),
+                title: response.data.title.replace(/\s\s+/g, " "),
                 id: id,
                 info: info,
             };
@@ -273,13 +277,19 @@ class Main extends React.Component {
         var appBar = (
             <AppBar style={{position: "fixed"}}>
                 <Toolbar>
-                    <IconButton className={classes.menuButton} onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
+                    {/* <IconButton className={classes.menuButton} onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
                         <MenuIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
+<<<<<<< HEAD
                     {this.state.progress && <CircularProgress color="default" size={30}/>}
+=======
+                    <Button color="inherit" onClick={this.toggleDrawer(true)}>
+                        Favorites
+                    </Button>
+>>>>>>> 85ef859310aaa2a40c373ea8bc7ae5b57831a68e
                     <Button color="inherit" onClick={this.handleLogInOut}>
                         {this.state.username === "GUEST" ? "Login" : "Logout"}
                     </Button>
@@ -346,6 +356,7 @@ class Main extends React.Component {
                 currentPaper={currentPaper}
                 referenceList={this.state.referenceList}
                 citationList={this.state.citationList}
+                handleChooseTitle={this.handleChooseTitle}
             />
         ) : null;
         var referenceList = displayMode === "List" ? (

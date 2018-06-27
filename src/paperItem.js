@@ -35,12 +35,14 @@ class PaperItem extends React.Component {
         })
     }
     handleClick() {
-        this.props.handleQuery(this.props.title, this.props.id, this.props.info);
+        this.props.handleChooseTitle(this.props.id);
     }
+
     searchSS = e => {
         var url = "https://www.semanticscholar.org/search?q=" + this.props.title + "&sort=relevance";
         window.open(url, "_blank");
     }
+
     render() {
         return (
             // <ListItem  >

@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Graph from 'react-graph-vis';
 import Slider from '@material-ui/lab/Slider';
+import FormLabel from '@material-ui/core/FormLabel';
 
 class PaperGraph extends React.Component {
     constructor(props) {
@@ -29,7 +30,13 @@ class PaperGraph extends React.Component {
         width -= 30;
         var nodeSeparation = 50;
         var nodeWidth = (width - nodeSeparation*(maxCitRefShown - 1)) / maxCitRefShown;
-        var nodes = [{id: 0, label: this.props.currentPaper.title, level: 1}];
+        var currentPaper = this.props.currentPaper;
+        var nodes = [{
+            id: 0,
+            label: currentPaper.title,
+            level: 1,
+            paperID: currentPaper.id,
+        }];
         var edges = [];
         var citationList = this.props.citationList;
         var referenceList = this.props.referenceList;
@@ -40,6 +47,7 @@ class PaperGraph extends React.Component {
                     label: citationList[i].title,
                     level: 0,
                     widthConstraint: {maximum: nodeWidth},
+                    paperID: citationList[i].id, // for event usage
                 });
                 edges.push({from: 2*i + 1, to: 0});
             }
@@ -49,6 +57,7 @@ class PaperGraph extends React.Component {
                     label: referenceList[i].title,
                     level: 2,
                     widthConstraint: {maximum: nodeWidth},
+                    paperID: referenceList[i].id, // for event usage
                 });
                 edges.push({from: 0, to: 2*i + 2});
             }
@@ -66,10 +75,12 @@ class PaperGraph extends React.Component {
                 }
             },
             physics: {
-                enabled: false
+                enabled: false,
             },
             interaction: {
-                zoomView: false
+                zoomView: false,
+                dragView: false,
+                dragNodes: false,
             },
             width: width + "px",
             height: height + "px",
@@ -80,16 +91,24 @@ class PaperGraph extends React.Component {
 
         const events = {
             select: event => {
-                var { nodes, edges } = event;
-            }
-        }
+                var nodeIDs = event.nodes;
+                if (nodeIDs) {
+                    nodeIDs.forEach(nodeID => {
+                        var paperID = nodes.filter(node => node.id === nodeID)[0].paperID;
+                        this.props.handleChooseTitle(paperID);
+                    });
+                }
+            },
+        };
         
         return (
             <Grid container>
-                <Grid item sm={2}>
-                    <Slider value={this.state.maxCitRefShown} min={0} max={6} step={1} onChange={this.handleSliderChange} />
-                </Grid>
-                <Grid item sm={10}>
+                <Grid item sm={10}></Grid>
+                <Grid item sm={2} style={{marginTop: 20}} >
+                    <FormLabel component="legend">
+                        Maximum number shown
+                    </FormLabel>
+                    <Slider value={maxCitRefShown} min={1} max={6} step={1} onChange={this.handleSliderChange} />
                 </Grid>
                 <Grid item sm={12}>
                     <Graph graph={graph} options={options} events={events} />

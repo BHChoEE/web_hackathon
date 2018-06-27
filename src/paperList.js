@@ -14,11 +14,6 @@ const styles = theme => ({
 class PaperList extends React.Component {
     constructor(props) {
         super(props);
-        this.handleQuery = this.handleQuery.bind(this);
-    }
-
-    handleQuery(title, id, info) {
-        this.props.handleChooseTitle(title, id, info);
     }
 
     render() {
@@ -37,7 +32,7 @@ class PaperList extends React.Component {
                 info={paper.info}
                 checked={this.props.favoritePapers[paper.title] !== undefined}
                 isInfluential={paper.isInfluential}
-                handleQuery={this.handleQuery}
+                handleChooseTitle={this.props.handleChooseTitle}
                 handleToggleChecked={this.props.handleToggleChecked}
             />
         ));
