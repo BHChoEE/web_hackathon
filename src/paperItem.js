@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemIcon, IconButton } from '@material-ui/core';
 import StarIcon from '@material-ui/icons/Star';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -15,7 +15,10 @@ class PaperItem extends React.Component {
     handleClick() {
         this.props.handleQuery(this.props.title, this.props.id, this.props.info);
     }
-    
+    searchSS = e => {
+        var url = "https://www.semanticscholar.org/search?q=" + this.props.title + "&sort=relevance";
+        window.open(url, "_blank");
+    }
     render() {
         return (
             <ListItem button onClick={this.handleClick}>
@@ -34,6 +37,7 @@ class PaperItem extends React.Component {
                         icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                     />
                 </ListItemSecondaryAction>
+                <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
             </ListItem>
         );
     }
