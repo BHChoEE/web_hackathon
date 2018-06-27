@@ -14,7 +14,7 @@ import StarIcon from '@material-ui/icons/Star';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
-import {Button, Icon} from '@material-ui/core';
+import {Button, Icon, CircularProgress} from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { ListItem, ListItemText } from '@material-ui/core';
@@ -60,6 +60,7 @@ class Main extends React.Component {
             drawerOpen: false,
             displayMode: "List",
             hasChosenTitle: false,
+            progress: false
         };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
@@ -102,6 +103,7 @@ class Main extends React.Component {
     
     sendQuery() {
         var query = this.state.query;
+        this.setState({progress: true});
         axios.get("https://export.arxiv.org/api/query?search_query=" + query)
         .then(response => {
             var soup = new JSSoup(response.data);
@@ -125,6 +127,7 @@ class Main extends React.Component {
                 searchResultList: searchResultList,
                 referenceList: [],
                 citationList: [],
+                progress: false
             });
         })
         .catch(error => {
@@ -141,6 +144,7 @@ class Main extends React.Component {
     }
 
     handleChooseTitle(title, id, info) {
+        this.setState({progress: true})
         axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
@@ -191,6 +195,7 @@ class Main extends React.Component {
                 citationList: citationList,
                 searchResultList: searchResultList,
                 hasChosenTitle: true,
+                progress: false
             });
         })
         .catch(error => {
@@ -274,6 +279,7 @@ class Main extends React.Component {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         Paper Query
                     </Typography>
+                    {this.state.progress && <CircularProgress color="default" size={30}/>}
                     <Button color="inherit" onClick={this.handleLogInOut}>
                         {this.state.username === "GUEST" ? "Login" : "Logout"}
                     </Button>
@@ -282,6 +288,7 @@ class Main extends React.Component {
                             SS<Icon className={classes.rightIcon}>send</Icon>
                         </Button>
                     </Grid> */}
+                    
                 </Toolbar>
             </AppBar>
         );
