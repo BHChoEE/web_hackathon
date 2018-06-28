@@ -58,28 +58,14 @@ class PaperItem extends React.Component {
                         <ListItemText inset primary={this.props.title} secondary={this.props.info} />
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                        <Grid container>
-                            <Grid item sm={9}>
-                                <p>{"Authors: " + this.state.authors.join(", ")}</p>
-                            </Grid>
-                            <Grid item sm={3}>
-                                <Grid container justify="flex-end">
-                                    <Grid item>
-                                        <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        <Checkbox
-                                            onChange={this.props.handleToggleChecked(this.props.title, this.props.id)}
-                                            checked={this.props.checked}
-                                            icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
+                        <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
+                        <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
+                        <Checkbox
+                            onChange={this.props.handleToggleChecked(this.props.title, this.props.id)}
+                            checked={this.props.checked}
+                            icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                        />
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
             // </ListItem>
