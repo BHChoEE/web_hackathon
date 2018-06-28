@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Button, Grid, Icon, withStyles, IconButton } from '@material-ui/core';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const styles = theme => ({
     input: {
@@ -46,17 +49,25 @@ class UserInput extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <Grid container spacing={24}>
-                <Grid item sm={10}>
-                    <Input id="#userInput" placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
-                    onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus />
-                </Grid>
-                <Grid item sm={2}>
-                    <Button className={classes.button} variant="outlined" onClick={this.props.sendQuery} color="primary" disabled={this.props.query.length === 0}>
-                        Search
-                        <Icon className={classes.rightIcon}>send</Icon>
-                    </Button>
-                </Grid>
+            <Grid container>
+                <Input id="#userInput" placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
+                onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus style={{flex: 1}}/>
+                <Button className={classes.button} variant="outlined" onClick={this.props.sendQuery} color="primary" disabled={this.props.query.length === 0}>
+                    Search
+                    <Icon className={classes.rightIcon}>send</Icon>
+                </Button>
+                <RadioGroup row value={this.props.displayMode} onChange={this.props.handleModeChange}>
+                    <FormControlLabel
+                        value="List"
+                        control={<Radio />}
+                        label="List mode"
+                    />
+                    <FormControlLabel
+                        value="Graph"
+                        control={<Radio />}
+                        label="Graph mode"
+                    />
+                </RadioGroup>
                 {/* <Grid item sm={2}>
                     <Button  className={classes.button} variant="outlined" onClick={this.searchGoogle} color="secondary"> 
                         Google <Icon className={classes.rightIcon}>send</Icon>

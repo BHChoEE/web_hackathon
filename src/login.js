@@ -1,5 +1,10 @@
 import React from 'react';
-import {Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button} from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import TextField from '@material-ui/core/TextField';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
 class Login extends React.Component {
@@ -12,20 +17,23 @@ class Login extends React.Component {
         };
         document.title = "Log In";
     }
+
     componentWillMount = () => {
         var retrievedObject = sessionStorage.getItem('userInfo');
         if(retrievedObject != null) {
             window.alert(retrievedObject + '\n redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
-            this.props.history.push('/main');
+            this.props.history.push('/');
         }
     };
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
             error: false
         });
     };
+
     LogInPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
         if (this.state.field_user.match(re) === null) {
@@ -50,7 +58,8 @@ class Login extends React.Component {
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
                 window.alert(userInfo['username']+': Log In Successfully!');
-                this.props.history.push('/main');
+                this.props.updateUsername(this.state.field_user);
+                this.props.history.push('/');
             }
             else {
                 window.alert(res.data);
@@ -76,7 +85,7 @@ class Login extends React.Component {
         };
         sessionStorage.setItem('GUEST', JSON.stringify(userInfo));
         window.alert(userInfo['username']+': Log In Successfully!');
-        this.props.history.push('/main');
+        this.props.history.push('/');
     }
 
     handleKeyPress = e => {
@@ -95,24 +104,22 @@ class Login extends React.Component {
 
     render() {
         return (
-            <Dialog open style={{backgroundImage:'url("/assets/login.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
-                <DialogTitle> Log In </DialogTitle>
-                <DialogContent>
-                    <DialogContentText> Please Enter Your Name </DialogContentText>
+            <Card open style={{marginTop: 80}}>
+                <CardHeader title="Log in" />
+                <CardContent>
                     <TextField error={this.state.error} margin="dense" id="username" label="name" type="username" autoFocus
                     value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
-                </DialogContent>
-                <DialogContent>
-                    <DialogContentText> Please Enter Your Password </DialogContentText>
+                </CardContent>
+                <CardContent>
                     <TextField error={this.state.error} margin="dense" id="password" label="password" type="password"
                     value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
-                </DialogContent>
-                <DialogActions>
+                </CardContent>
+                <CardActions>
                     <Button onClick={this.GuestLogIn} color="secondary"> Guest </Button>
                     <Button onClick={this.SignUpPage} color="secondary"> Sign Up </Button>
                     <Button onClick={this.LogInPage} color="primary"> Log In </Button>
-                </DialogActions>
-            </Dialog>
+                </CardActions>
+            </Card>
         );
     }
 }

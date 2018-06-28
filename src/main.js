@@ -5,39 +5,25 @@ import PaperList from './paperList';
 import DetailedPaperList from './detailedPaperList';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import StarIcon from '@material-ui/icons/Star';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
-import {Button, Icon, CircularProgress} from '@material-ui/core';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import Switch from '@material-ui/core/Switch';
-import { ListItem, ListItemText } from '@material-ui/core';
 const JSSoup = require('jssoup').default;
 import PaperGraph from './paperGraph';
 import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
 import FormControl from '@material-ui/core/FormControl';
 
 const styles = {
     root: {
         flexGrow: 1,
     },
-    flex: {
-        flex: 1,
-    },
     menuButton: {
         marginLeft: -12,
         marginRight: 20,
-    },
-    drawer: {
-        width: 500,
     },
     main: {
         marginLeft: 20,
@@ -46,66 +32,38 @@ const styles = {
 };
 
 class Main extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            username: "",
             query: "",
             searchResultList: [],
             referenceList: [],
             citationList: [],
             onlyInfluentialRefs: false,
             onlyInfluentialCits: false,
-            favoritePapers: {},
-            drawerOpen: false,
             displayMode: "List",
             hasChosenTitle: false,
-            progress: false
         };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
-        this.handleToggleChecked = this.handleToggleChecked.bind(this);
-        this.handleLogInOut = this.handleLogInOut.bind(this);
+        this.handleModeChange = this.handleModeChange.bind(this);
 
         document.title = "Paper Query";
     }
-    
-    componentDidMount() {
-        var username;
-        var retrievedObject = sessionStorage.getItem('userInfo');
-        if (retrievedObject == null) {
-            username = "GUEST";
+
+    componentDidUpdate() {
+        var toBePushed = this.props.toBePushed;
+        if (toBePushed !== "") {
+            this.props.resetToBePushed();
+            this.props.history.push(toBePushed);
         }
-        else {
-            retrievedObject = JSON.parse(retrievedObject);
-            username = retrievedObject.username;
-        }
-        this.setState({username: username}, () => {
-            // if username not GUEST, load back all favorite paper to favoritePapers
-            if(this.state.username != "GUEST"){
-                axios.post('/favorite/all', {
-                    username: this.state.username
-                })
-                .then(res => {
-                    var newFavoritePapers = {};
-                    res['data'].forEach(paper => {
-                        newFavoritePapers[paper.title] = paper.id;
-                    });
-                    this.setState({favoritePapers: newFavoritePapers});
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
-        });
-        
     }
-    
+
     sendQuery() {
         var query = this.state.query;
-        this.setState({progress: true});
+        this.props.setProgress(true);
         axios.get("https://export.arxiv.org/api/query?search_query=" + query)
         .then(response => {
             var soup = new JSSoup(response.data);
@@ -129,8 +87,8 @@ class Main extends React.Component {
                 searchResultList: searchResultList,
                 referenceList: [],
                 citationList: [],
-                progress: false
             });
+            this.props.setProgress(false);
         })
         .catch(error => {
             console.log(error);
@@ -146,7 +104,7 @@ class Main extends React.Component {
     }
 
     handleChooseTitle(id) {
-        this.setState({progress: true})
+        this.props.setProgress(true);
         axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
@@ -195,44 +153,11 @@ class Main extends React.Component {
                 citationList: citationList,
                 searchResultList: searchResultList,
                 hasChosenTitle: true,
-                progress: false
             });
+            this.props.setProgress(false);
         })
         .catch(error => {
             console.log(error);
-        });
-    }
-
-    handleToggleChecked = (title, id) => () => {
-        var newFavoritePapers = {...this.state.favoritePapers};
-        var action = '';
-        if (newFavoritePapers[title] === undefined) {
-            newFavoritePapers[title] = id;
-            // save favorite to db
-            action = 'add';
-        }
-        else {
-            delete newFavoritePapers[title];
-            // delete favorite from db
-            action = 'remove';
-        }
-        
-        axios.post('/favorite/' + action, {
-            title: title,
-            id: id,
-            username: this.state.username
-        })
-        .then(res => {
-            this.setState({favoritePapers: newFavoritePapers});
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    }
-    
-    toggleDrawer = state => () => {
-        this.setState({
-            drawerOpen: state,
         });
     }
 
@@ -245,105 +170,31 @@ class Main extends React.Component {
         this.setState({displayMode: event.target.value});
     }
 
-    handleLogInOut() {
-        if (this.state.username === "GUEST") {
-            // login
-            this.props.history.push('/login');
-        }
-        else {
-            // logout
-            sessionStorage.clear();
-            this.setState({
-                username: "GUEST",
-                favoritePapers: [],
-            });
-            this.props.history.push('/login');
-        }
-    }
-
     render() {
         const { classes } = this.props;
-        var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
-            <ListItem key={title}>
-              <ListItemText primary={title} />
-            </ListItem>
-        ));
         var displayMode = this.state.displayMode;
         var currentPaper = this.state.searchResultList[this.state.searchResultList.length - 1];
-        var appBar = (
-            <AppBar style={{position: "fixed"}}>
-                <Toolbar>
-                    {/* <IconButton className={classes.menuButton} onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
-                        <MenuIcon />
-                    </IconButton> */}
-                    <Typography variant="title" color="inherit" className={classes.flex}>
-                        Paper Query
-                    </Typography>
-                    {this.state.progress && <CircularProgress color="inherit" size={30}/>}
-                    <Button color="inherit" onClick={this.toggleDrawer(true)}>
-                        Favorites
-                    </Button>
-                    <Button color="inherit" onClick={this.handleLogInOut}>
-                        {this.state.username === "GUEST" ? "Login" : "Logout"}
-                    </Button>
-                    {/* <Grid>
-                        <Button  className={classes.button} variant="outlined" onClick={this.searchSS} color="secondary"> 
-                            SS<Icon className={classes.rightIcon}>send</Icon>
-                        </Button>
-                    </Grid> */}
-                    
-                </Toolbar>
-            </AppBar>
-        );
-        var drawer = (
-            <Drawer open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
-                <div
-                    tabIndex={0}
-                    role="button"
-                >
-                    <Typography variant="title" color="inherit" className={classes.flex}>
-                        <StarIcon />   Favorite Papers
-                    </Typography>
-                    <div className={classes.drawer}>
-                        <List>
-                            {favoritePapers}
-                        </List>
-                    </div>
-                </div>
-            </Drawer>
-        );
+        var favoritePapers = this.props.favoritePapers;
+
         var userInput = (
             <UserInput
                 sendQuery={this.sendQuery}
                 query={this.state.query}
                 updateQuery={this.updateQuery}
+                displayMode={displayMode}
+                handleModeChange={this.handleModeChange}
             />
         );
-        var displayModeControl = (
-            <FormControl component="fieldset">
-                <FormLabel component="legend">Display mode</FormLabel>
-                <RadioGroup row aria-label="Display Mode" className={classes.group} value={displayMode} onChange={this.handleModeChange}>
-                    <FormControlLabel
-                        value="List"
-                        control={<Radio />}
-                        label="List"
-                    />
-                    <FormControlLabel
-                        value="Graph"
-                        control={<Radio />}
-                        label="Graph"
-                    />
-                </RadioGroup>
-            </FormControl>
-        );
+
         var searchResultList = (
             <PaperList
                 list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.handleToggleChecked}
-                favoritePapers={this.state.favoritePapers}
+                handleToggleChecked={this.props.handleToggleChecked}
+                favoritePapers={favoritePapers}
             />
         );
+
         var graph = this.state.hasChosenTitle && displayMode === "Graph" ? (
             <PaperGraph
                 currentPaper={currentPaper}
@@ -352,6 +203,7 @@ class Main extends React.Component {
                 handleChooseTitle={this.handleChooseTitle}
             />
         ) : null;
+
         var referenceList = displayMode === "List" ? (
             <DetailedPaperList
                 title="References"
@@ -359,10 +211,11 @@ class Main extends React.Component {
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialRefs")}
                 list={this.state.referenceList}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.handleToggleChecked}
-                favoritePapers={this.state.favoritePapers}
+                handleToggleChecked={this.props.handleToggleChecked}
+                favoritePapers={favoritePapers}
             />
         ) : null;
+
         var citationList = displayMode === "List" ? (
             <DetailedPaperList
                 title="Citations"
@@ -370,26 +223,22 @@ class Main extends React.Component {
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialCits")}
                 list={this.state.citationList}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.handleToggleChecked}
-                favoritePapers={this.state.favoritePapers}
+                handleToggleChecked={this.props.handleToggleChecked}
+                favoritePapers={favoritePapers}
             />
         ) : null;
+
         return (
             <div className={classes.root}>
-                {appBar}
-                <div className={classes.main}>
-                <Grid container spacing={24} style={{marginTop: 80}}>
-                    {drawer}
-                    <Grid container spacing={24}>
-                        <Grid item sm={10}>{userInput}</Grid>
-                        <Grid item sm={2}>{displayModeControl}</Grid>
-                    </Grid>
+                <Grid container style={{marginTop: 80}}>
+                    {userInput}
                     {searchResultList}
-                    {citationList}
-                    {referenceList}
+                    <Grid container spacing={16} style={{marginTop: 12}}>
+                        {citationList}
+                        {referenceList}
+                    </Grid>
                     {graph}
                 </Grid>
-            </div>
             </div>
         );
     }

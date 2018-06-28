@@ -1,5 +1,10 @@
 import React from 'react';
-import {Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button} from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import TextField from '@material-ui/core/TextField';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
 class SignUp extends React.Component {
@@ -18,9 +23,17 @@ class SignUp extends React.Component {
         if (retrievedObject != null) {
             window.alert(retrievedObject + '\n Log In Redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
-            this.props.history.push('/main/'+username);
+            this.props.history.push('/');
         }
     };
+
+    componentDidUpdate() {
+        var toBePushed = this.props.toBePushed;
+        if (toBePushed !== "") {
+            this.props.resetToBePushed();
+            this.props.history.push(toBePushed);
+        }
+    }
 
     handleChange = name => event => {
         this.setState({
@@ -84,23 +97,21 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <Dialog open style= {{backgroundImage:'url("/assets/SignIn.jpg")', backgroundSize:"cover"}} fullScreen={this.props.fullScreen}>
-                <DialogTitle>Sign Up</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Please Enter Your Name</DialogContentText>
+            <Card open style={{marginTop: 80}}>
+                <CardHeader title="Sign up" />
+                <CardContent>
                     <TextField error={this.state.error} margin="dense" id="username" label="Name" type="username" autoFocus
                     value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
-                </DialogContent>
-                <DialogContent>
-                    <DialogContentText>Please Enter Your Password</DialogContentText>
+                </CardContent>
+                <CardContent>
                     <TextField error={this.state.error} margin="dense" id="password" label="Password" type="password"
                     value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
-                </DialogContent>
-                <DialogActions>
+                </CardContent>
+                <CardActions>
                     <Button onClick={this.LogInPage} color="secondary">Return</Button>
                     <Button onClick={this.SignUpPage} color="primary">Confirm</Button>
-                </DialogActions>
-            </Dialog>
+                </CardActions>
+            </Card>
         );
     }
 }

@@ -33,7 +33,7 @@ class UserSocket {
             }
             else if (user.length == 1) {
                 console.log(user);
-                res.redirect('/main');
+                res.send('redirect');
             }
             else {
                 console.log('user not found');
