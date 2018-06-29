@@ -54,7 +54,7 @@ class App extends React.Component {
                 .then(res => {
                     var newFavoritePapers = {};
                     res['data'].forEach(paper => {
-                        newFavoritePapers[paper.title] = paper.id;
+                        newFavoritePapers[paper.title] = paper.paperId;
                     });
                     this.setState({favoritePapers: newFavoritePapers});
                 })
@@ -83,11 +83,11 @@ class App extends React.Component {
         });
     }
 
-    handleToggleChecked = (title, id) => () => {
+    handleToggleChecked = (title, paperId) => () => {
         var newFavoritePapers = {...this.state.favoritePapers};
         var action = '';
         if (newFavoritePapers[title] === undefined) {
-            newFavoritePapers[title] = id;
+            newFavoritePapers[title] = paperId;
             // save favorite to db
             action = 'add';
         }
@@ -99,7 +99,7 @@ class App extends React.Component {
 
         axios.post('/favorite/' + action, {
             title: title,
-            id: id,
+            paperId: paperId,
             username: this.state.username
         })
         .then(res => {

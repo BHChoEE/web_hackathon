@@ -75,10 +75,10 @@ class Main extends React.Component {
                 var year = find("published", entry).substring(0, 4);
                 if (parseInt(year) >= 2008) {
                     var title = find("title", entry);
-                    var id = find("id", entry).split("/abs/")[1].split("v")[0];
+                    var paperId = find("id", entry).split("/abs/")[1].split("v")[0];
                     searchResultList.push({
                         title: title.replace(/\s\s+/g, " "),
-                        id: "arXiv:" + id,
+                        paperId: "arXiv:" + paperId,
                         info: year + " ArXiv",
                     });
                 }
@@ -103,9 +103,9 @@ class Main extends React.Component {
         this.setState({[onlyInfluential]: e.target.checked});
     }
 
-    handleChooseTitle(id) {
+    handleChooseTitle(paperId) {
         this.props.setProgress(true);
-        axios.get("https://api.semanticscholar.org/v1/paper/" + id + "?include_unknown_references=false")
+        axios.get("https://api.semanticscholar.org/v1/paper/" + paperId + "?include_unknown_references=false")
         .then(response => {
             var referenceList = [];
             var citationList = [];
@@ -114,7 +114,7 @@ class Main extends React.Component {
                     var info = [paper.year || "", paper.venue || ""].join(" ");
                     var paperObj = {
                         title: paper.title,
-                        id: paper.paperId,
+                        paperId: paper.paperId,
                         isInfluential: paper.isInfluential,
                         info: info,
                     };
@@ -132,16 +132,16 @@ class Main extends React.Component {
             var info = [response.data.year || "", response.data.venue || ""].join(" ")
             var paper = {
                 title: response.data.title.replace(/\s\s+/g, " "),
-                id: id,
+                paperId: paperId,
                 info: info,
             };
-            if (id.includes("arXiv:")) {
+            if (paperId.includes("arXiv:")) {
                 searchResultList = [paper];
             }
             else {
                 var i = 0;
                 for (; i < searchResultList.length; i++) {
-                    if (searchResultList[i].id == id) {
+                    if (searchResultList[i].paperId == paperId) {
                         break;
                     }
                 }

@@ -27,8 +27,8 @@ class PaperList extends React.Component {
         papers = papers.map(paper => (
             <PaperItem
                 title={paper.title}
-                id={paper.id}
-                key={paper.id}
+                paperId={paper.paperId}
+                key={paper.paperId}
                 info={paper.info}
                 checked={this.props.favoritePapers[paper.title] !== undefined}
                 isInfluential={paper.isInfluential}

@@ -10,11 +10,11 @@ class FavoriteSocket {
     addFavorite(data, res) {
         var favorite = {
             title: data.title,
-            id: data.id,
+            paperId: data.paperId,
             username: data.username
         };
         var query = {
-            id: data.id,
+            paperId: data.paperId,
             username: data.username
         };
         var options = {
@@ -35,7 +35,7 @@ class FavoriteSocket {
     };
 
     removeFavorite(data, res) {
-        const query = {id: data.id, username: data.username};
+        const query = {paperId: data.paperId, username: data.username};
         Favorite.findOneAndRemove(query, (err, result) => {
             if (err) {
                 console.log(err);

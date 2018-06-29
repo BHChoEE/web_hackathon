@@ -18,7 +18,7 @@ class PaperItem extends React.Component {
         if(this.state.authors.length!=0){
             return;
         }
-        axios.get("https://api.semanticscholar.org/v1/paper/" + this.props.id + "?include_unknown_references=false")
+        axios.get("https://api.semanticscholar.org/v1/paper/" + this.props.paperId + "?include_unknown_references=false")
         .then(res => {
             var authors = []
             var searchHelper = (src, dst) => {
@@ -35,7 +35,7 @@ class PaperItem extends React.Component {
         })
     }
     handleClick() {
-        this.props.handleChooseTitle(this.props.id);
+        this.props.handleChooseTitle(this.props.paperId);
     }
 
     searchSS = e => {
@@ -62,7 +62,7 @@ class PaperItem extends React.Component {
                         <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
                         <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
                         <Checkbox
-                            onChange={this.props.handleToggleChecked(this.props.title, this.props.id)}
+                            onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId)}
                             checked={this.props.checked}
                             icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                         />

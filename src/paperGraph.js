@@ -35,7 +35,7 @@ class PaperGraph extends React.Component {
             id: 0,
             label: currentPaper.title,
             level: 1,
-            paperID: currentPaper.id,
+            paperID: currentPaper.paperId,
         }];
         var edges = [];
         var citationList = this.props.citationList;
@@ -47,7 +47,7 @@ class PaperGraph extends React.Component {
                     label: citationList[i].title,
                     level: 0,
                     widthConstraint: {maximum: nodeWidth},
-                    paperID: citationList[i].id, // for event usage
+                    paperID: citationList[i].paperId, // for event usage
                 });
                 edges.push({from: 2*i + 1, to: 0});
             }
@@ -57,7 +57,7 @@ class PaperGraph extends React.Component {
                     label: referenceList[i].title,
                     level: 2,
                     widthConstraint: {maximum: nodeWidth},
-                    paperID: referenceList[i].id, // for event usage
+                    paperID: referenceList[i].paperId, // for event usage
                 });
                 edges.push({from: 0, to: 2*i + 2});
             }

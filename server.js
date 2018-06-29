@@ -40,7 +40,7 @@ app.post('/user/login', (req, res) => {
 app.post('/favorite/add', (req, res) => {
 	var favorite = {
 		title: req.body.title,
-		id: req.body.id,
+		paperId: req.body.paperId,
 		username: req.body.username,
 	};
 	favoriteSocket.addFavorite(favorite, res);
@@ -49,7 +49,7 @@ app.post('/favorite/add', (req, res) => {
 app.post('/favorite/remove', (req, res) => {
 	var favorite = {
 		title: req.body.title,
-		id: req.body.id,
+		paperId: req.body.paperId,
 		username: req.body.username,
 	};
 	favoriteSocket.removeFavorite(favorite, res);
