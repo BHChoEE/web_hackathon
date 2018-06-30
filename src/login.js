@@ -55,7 +55,25 @@ class Login extends React.Component {
             updateTime: Date.now()
         })
         .then(res => {
-            if (res.data != 'user not found') {
+            if (res.data === 'user not found') {
+                //window.alert(res.data);
+                this.props.snackbarCb(res.data);
+                this.setState({
+                    error: true,
+                    field_pwd: "",
+                    field_user: ""
+                });
+            }
+            else if (res.data === 'password wrong') {
+                //window.alert(res.data);
+                this.props.snackbarCb(res.data);
+                this.setState({
+                    error: true,
+                    field_pwd: "",
+                    field_user: ""
+                });
+            }
+            else {
                 sessionStorage.clear();
                 var userInfo = {
                     "username": this.state.field_user 
@@ -65,15 +83,6 @@ class Login extends React.Component {
                 this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
                 this.props.updateUsername(this.state.field_user);
                 this.props.history.push('/');
-            }
-            else {
-                //window.alert(res.data);
-                this.props.snackbarCb(res.data);
-                this.setState({
-                    error: true,
-                    field_pwd: "",
-                    field_user: ""
-                });
             }
         })
         .catch(error => {
