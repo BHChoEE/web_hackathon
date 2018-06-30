@@ -45,30 +45,28 @@ class PaperItem extends React.Component {
 
     render() {
         return (
-            // <ListItem  >
-                <ExpansionPanel onClick={this.handleMore}>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                        {
-                            this.props.isInfluential &&
-                            <ListItemIcon>
-                                <StarIcon />
-                            </ListItemIcon>
-                        }
-                        {/* props.info may vary */}
-                        <ListItemText inset primary={this.props.title} secondary={this.props.info} />
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                        <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
-                        <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
-                        <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
-                        <Checkbox
-                            onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId)}
-                            checked={this.props.checked}
-                            icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                        />
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
-            // </ListItem>
+            <ExpansionPanel onClick={this.handleMore}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    {
+                        this.props.isInfluential &&
+                        <ListItemIcon>
+                            <StarIcon />
+                        </ListItemIcon>
+                    }
+                    {/* props.info may vary */}
+                    <ListItemText inset primary={this.props.title} secondary={this.props.info} />
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
+                    <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
+                    <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
+                    <Checkbox
+                        onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId)}
+                        checked={this.props.checked}
+                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                    />
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
         );
     }
 }

@@ -49,7 +49,6 @@ class Login extends React.Component {
             });
             return;
         }
-        // send data by axios "/user/login"
         axios.post("/user/login", {
             username: this.state.field_user,
             password: this.state.field_pwd,

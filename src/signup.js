@@ -49,7 +49,6 @@ class SignUp extends React.Component {
             });
             return;
         }
-        // Send User Info to server by "/user/signup"
         axios.post('/user/signup', {
             username: this.state.field_user,
             password: this.state.field_pwd,

@@ -73,12 +73,10 @@ class App extends React.Component {
         var action = '';
         if (newFavoritePapers[title] === undefined) {
             newFavoritePapers[title] = paperId;
-            // save favorite to db
             action = 'add';
         }
         else {
             delete newFavoritePapers[title];
-            // delete favorite from db
             action = 'remove';
         }
 

@@ -38,9 +38,7 @@ class PaperList extends React.Component {
         ));
         return (
             <div className={this.props.classes.root}>
-                {/* <List component="nav"> */}
-                    {papers}
-                {/* </List> */}
+                {papers}
             </div>
         );
     }

@@ -172,11 +172,6 @@ class Main extends React.Component {
         });
     }
 
-    // searchSS = e => {
-    //     var url = "https://www.semanticscholar.org/search?q=" + this.state.query + "&sort=relevance";
-    //     window.open(url, "_blank");
-    // }
-    
     handleModeChange = event => {
         this.setState({displayMode: event.target.value});
     }
