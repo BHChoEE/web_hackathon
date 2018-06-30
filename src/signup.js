@@ -57,11 +57,13 @@ class SignUp extends React.Component {
         .then(res => {
             if (res.data._message == null) {
                 var username = res.data.username;
-                window.alert('Sign Up successfully!' + username);
+                // window.alert('Sign Up successfully!' + username);
+                this.props.snackbarCb('Sign Up successfully!' + username);
                 this.LogInPage();
             }
             else {
-                window.alert(res.data._message + ': already used or invalid');
+                // window.alert(res.data._message + ': already used or invalid');
+                this.props.snackbarCb(res.data._message + ': already used or invalid');
                 this.setState({
                     error: true,
                     field_user: "",

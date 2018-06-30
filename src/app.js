@@ -17,7 +17,7 @@ import Login from './login.js';
 import SignUp from './signup.js';
 import Main from './main.js'
 import UserMenu from './userMenu.js';
-
+import SimpleSnackbar from './snackbar.js';
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -27,6 +27,8 @@ class App extends React.Component {
             drawerOpen: false,
             favoritePapers: {},
             toBePushed: "",
+            snackOpen: false,
+            snackMessage: ""
         };
 
         this.handleLogInOut = this.handleLogInOut.bind(this);
@@ -36,6 +38,8 @@ class App extends React.Component {
         this.updateUsername = this.updateUsername.bind(this);
         this.setProgress = this.setProgress.bind(this);
         this.refresh = this.refresh.bind(this);
+        this.handleSnackClose = this.handleSnackClose.bind(this)
+        this.snackbarCb = this.snackbarCb.bind(this);
     }
 
     componentDidMount() {
@@ -127,6 +131,12 @@ class App extends React.Component {
         this.setState({toBePushed: "/"});
     }
 
+    snackbarCb(msg){
+        this.setState({snackOpen: true, snackMessage: msg})
+    }
+    handleSnackClose(){
+        this.setState({snackOpen: false});
+    }
     render() {
         var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
             <ListItem key={title}>
@@ -186,15 +196,17 @@ class App extends React.Component {
                 toggleDrawer={this.toggleDrawer}
                 handleToggleChecked={this.handleToggleChecked}
                 setProgress={this.setProgress}
+                snackbarCb={this.snackbarCb}
             />
         );
 
-        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} />;
+        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} snackbarCb={this.snackbarCb}/>;
 
-        var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} />
+        var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} snackbarCb={this.snackbarCb}/>
 
         return (
             <div>
+                <SimpleSnackbar open={this.state.snackOpen} handleClose={this.handleSnackClose} msg={this.state.snackMessage}/>
                 {drawer}
                 {appBar}
                 <BrowserRouter>
