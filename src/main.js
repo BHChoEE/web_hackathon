@@ -57,7 +57,18 @@ class Main extends React.Component {
         var toBePushed = this.props.toBePushed;
         if (toBePushed !== "") {
             this.props.resetToBePushed();
-            this.props.history.push(toBePushed);
+            if (toBePushed !== "/") {
+                this.props.history.push(toBePushed);
+            }
+            else {
+                this.setState({
+                    query: "",
+                    searchResultList: [],
+                    referenceList: [],
+                    citationList: [],
+                    hasChosenTitle: false,
+                });
+            }
         }
     }
 

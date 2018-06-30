@@ -6,6 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import ButtonBase from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Drawer from '@material-ui/core/Drawer';
 import StarIcon from '@material-ui/icons/Star';
@@ -33,6 +34,7 @@ class App extends React.Component {
         this.resetToBePushed = this.resetToBePushed.bind(this);
         this.updateUsername = this.updateUsername.bind(this);
         this.setProgress = this.setProgress.bind(this);
+        this.refresh = this.refresh.bind(this);
     }
 
     componentDidMount() {
@@ -45,24 +47,7 @@ class App extends React.Component {
             retrievedObject = JSON.parse(retrievedObject);
             username = retrievedObject.username;
         }
-        this.setState({username: username}, () => {
-            // if username not GUEST, load back all favorite paper to favoritePapers
-            if (this.state.username != "GUEST") {
-                axios.post('/favorite/all', {
-                    username: this.state.username
-                })
-                .then(res => {
-                    var newFavoritePapers = {};
-                    res['data'].forEach(paper => {
-                        newFavoritePapers[paper.title] = paper.paperId;
-                    });
-                    this.setState({favoritePapers: newFavoritePapers});
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
-        });
+        this.updateUsername(username);
     }
 
     handleLogInOut() {
@@ -115,11 +100,32 @@ class App extends React.Component {
     }
 
     updateUsername(username) {
-        this.setState({username: username});
+        this.setState({username: username}, () => {
+            // if username not GUEST, load back all favorite paper to favoritePapers
+            if (this.state.username != "GUEST") {
+                axios.post('/favorite/all', {
+                    username: this.state.username
+                })
+                .then(res => {
+                    var newFavoritePapers = {};
+                    res['data'].forEach(paper => {
+                        newFavoritePapers[paper.title] = paper.paperId;
+                    });
+                    this.setState({favoritePapers: newFavoritePapers});
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        });
     }
 
     setProgress(status) {
         this.setState({progress: status});
+    }
+
+    refresh() {
+        this.setState({toBePushed: "/"});
     }
 
     render() {
@@ -154,7 +160,9 @@ class App extends React.Component {
                         <MenuIcon />
                     </IconButton> */}
                     <Typography variant="title" color="inherit" style={{flex: 1}}>
-                        Paper Query
+                        <ButtonBase onClick={this.refresh} style={{fontSize: 20}} color="inherit">
+                            Paper Query
+                        </ButtonBase>
                     </Typography>
                     {this.state.progress && <CircularProgress color="inherit" size={30}/>}
                     <Button color="inherit" onClick={this.toggleDrawer(true)}>
@@ -180,7 +188,7 @@ class App extends React.Component {
             />
         );
 
-        var login = (props) => <Login {...props} updateUsername={this.updateUsername} />;
+        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} />;
 
         var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} />
 

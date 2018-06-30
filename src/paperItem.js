@@ -30,7 +30,7 @@ class PaperItem extends React.Component {
             searchHelper(res.data.authors, authors);
             this.setState({authors: authors});
         })
-        .catch(function(err){
+        .catch(err => {
             console.log(err);
         })
     }

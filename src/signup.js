@@ -16,16 +16,13 @@ class SignUp extends React.Component {
             error: false
         };
         document.title = "Sign Up";
-    }
-
-    componentWillMount = () => {
         var retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
-            window.alert(retrievedObject + '\n Log In Redirect to Main...');
+            window.alert(retrievedObject + '\n Redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
-    };
+    }
 
     componentDidUpdate() {
         var toBePushed = this.props.toBePushed;

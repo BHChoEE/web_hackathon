@@ -16,16 +16,21 @@ class Login extends React.Component {
             error: false
         };
         document.title = "Log In";
-    }
-
-    componentWillMount = () => {
         var retrievedObject = sessionStorage.getItem('userInfo');
-        if(retrievedObject != null) {
-            window.alert(retrievedObject + '\n redirect to Main...');
+        if (retrievedObject != null) {
+            window.alert(retrievedObject + '\n Redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
-    };
+    }
+
+    componentDidUpdate() {
+        var toBePushed = this.props.toBePushed;
+        if (toBePushed !== "") {
+            this.props.resetToBePushed();
+            this.props.history.push(toBePushed);
+        }
+    }
 
     handleChange = name => event => {
         this.setState({
