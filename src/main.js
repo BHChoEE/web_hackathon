@@ -16,6 +16,15 @@ const JSSoup = require('jssoup').default;
 import PaperGraph from './paperGraph';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
+import Drawer from '@material-ui/core/Drawer';
+import StarIcon from '@material-ui/icons/Star';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import Favorite from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import TextField from '@material-ui/core/TextField';
 
 const styles = {
     root: {
@@ -43,12 +52,15 @@ class Main extends React.Component {
             onlyInfluentialCits: false,
             displayMode: "List",
             hasChosenTitle: false,
+            maxCitRefShown: 10,
         };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
         this.handleChooseTitle = this.handleChooseTitle.bind(this);
         this.updateOnlyInfluential = this.updateOnlyInfluential.bind(this);
         this.handleModeChange = this.handleModeChange.bind(this);
+        this.handleChooseFavorite = this.handleChooseFavorite.bind(this);
+        this.handleMaxShownChange = this.handleMaxShownChange.bind(this);
 
         document.title = "Paper Query";
     }
@@ -114,7 +126,7 @@ class Main extends React.Component {
         this.setState({[onlyInfluential]: e.target.checked});
     }
 
-    handleChooseTitle(paperId) {
+    handleChooseTitle = paperId => () => {
         this.props.setProgress(true);
         axios.get("https://api.semanticscholar.org/v1/paper/" + paperId + "?include_unknown_references=false")
         .then(response => {
@@ -176,11 +188,56 @@ class Main extends React.Component {
         this.setState({displayMode: event.target.value});
     }
 
+    handleChooseFavorite = paperId => () => {
+        this.props.toggleDrawer(false)();
+        this.setState({searchResultList: []}, this.handleChooseTitle(paperId));
+    }
+
+    handleMaxShownChange(event) {
+        var maxCitRefShown = Math.max(event.target.value, 1);
+        this.setState({maxCitRefShown: maxCitRefShown});
+    }
+
     render() {
         const { classes } = this.props;
         var displayMode = this.state.displayMode;
         var currentPaper = this.state.searchResultList[this.state.searchResultList.length - 1];
         var favoritePapers = this.props.favoritePapers;
+
+        var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
+            var paperId = favoritePapers[title];
+            return (
+                <ListItem key={title}>
+                    <ListItemText primary={title} style={{flex: 1}} />
+                    <IconButton onClick={this.handleChooseFavorite(paperId)}>
+                        <Icon>more_horiz</Icon>
+                    </IconButton>
+                    <Checkbox
+                        onChange={this.props.handleToggleChecked(title, paperId)}
+                        checked={true}
+                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                    />
+                </ListItem>
+            );
+        });
+
+        var drawer = (
+            <Drawer open={this.props.drawerOpen} onClose={this.props.toggleDrawer(false)}>
+                <div
+                    tabIndex={0}
+                    role="button"
+                >
+                    <Typography variant="title" color="inherit" style={{flex: 1}}>
+                        <StarIcon /> Favorite Papers
+                    </Typography>
+                    <div style={{width: 500}}>
+                        <List>
+                            {favoritePaperListItems}
+                        </List>
+                    </div>
+                </div>
+            </Drawer>
+        );
 
         var userInput = (
             <UserInput
@@ -210,12 +267,14 @@ class Main extends React.Component {
             />
         ) : null;
 
+        var maxCitRefShown = this.state.maxCitRefShown;
+
         var referenceList = displayMode === "List" ? (
             <DetailedPaperList
                 title="References"
                 onlyInfluential={this.state.onlyInfluentialRefs}
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialRefs")}
-                list={this.state.referenceList}
+                list={this.state.referenceList.slice(0, maxCitRefShown)}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.props.handleToggleChecked}
                 favoritePapers={favoritePapers}
@@ -227,7 +286,7 @@ class Main extends React.Component {
                 title="Citations"
                 onlyInfluential={this.state.onlyInfluentialCits}
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialCits")}
-                list={this.state.citationList}
+                list={this.state.citationList.slice(0, maxCitRefShown)}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={this.props.handleToggleChecked}
                 favoritePapers={favoritePapers}
@@ -236,9 +295,21 @@ class Main extends React.Component {
 
         return (
             <div className={classes.root}>
+                {drawer}
                 <Grid container style={{marginTop: 80}}>
                     {userInput}
                     {searchResultList}
+                    {
+                        this.state.displayMode === "List" &&
+                        <TextField
+                            label="Maximum number shown"
+                            value={this.state.maxCitRefShown}
+                            onChange={this.handleMaxShownChange}
+                            type="number"
+                            InputLabelProps={{shrink: true}}
+                            margin="normal"
+                        />
+                    }
                     <Grid container spacing={16} style={{marginTop: 12}}>
                         {citationList}
                         {referenceList}

@@ -95,7 +95,7 @@ class PaperGraph extends React.Component {
                 if (nodeIDs) {
                     nodeIDs.forEach(nodeID => {
                         var paperID = nodes.filter(node => node.id === nodeID)[0].paperID;
-                        this.props.handleChooseTitle(paperID);
+                        this.props.handleChooseTitle(paperID)();
                     });
                 }
             },
@@ -103,7 +103,6 @@ class PaperGraph extends React.Component {
         
         return (
             <Grid container>
-                <Grid item sm={10}></Grid>
                 <Grid item sm={2} style={{marginTop: 20}} >
                     <FormLabel component="legend">
                         Maximum number shown

@@ -8,11 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Drawer from '@material-ui/core/Drawer';
-import StarIcon from '@material-ui/icons/Star';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Login from './login.js';
 import SignUp from './signup.js';
 import Main from './main.js'
@@ -56,7 +52,7 @@ class App extends React.Component {
             sessionStorage.clear();
             this.setState({
                 username: "GUEST",
-                favoritePapers: [],
+                favoritePapers: {},
             });
         }
         this.setState({toBePushed: "/login"});
@@ -127,30 +123,6 @@ class App extends React.Component {
     }
 
     render() {
-        var favoritePapers = Object.keys(this.state.favoritePapers).map(title => (
-            <ListItem key={title}>
-              <ListItemText primary={title} />
-            </ListItem>
-        ));
-
-        var drawer = (
-            <Drawer open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
-                <div
-                    tabIndex={0}
-                    role="button"
-                >
-                    <Typography variant="title" color="inherit" style={{flex: 1}}>
-                        <StarIcon />   Favorite Papers
-                    </Typography>
-                    <div style={{width: 500}}>
-                        <List>
-                            {favoritePapers}
-                        </List>
-                    </div>
-                </div>
-            </Drawer>
-        );
-
         var appBar = (
             <AppBar style={{position: "fixed"}}>
                 <Toolbar>
@@ -179,6 +151,7 @@ class App extends React.Component {
                 username={this.state.username}
                 favoritePapers={this.state.favoritePapers}
                 toBePushed={this.state.toBePushed}
+                drawerOpen={this.state.drawerOpen}
                 resetToBePushed={this.resetToBePushed}
                 toggleDrawer={this.toggleDrawer}
                 handleToggleChecked={this.handleToggleChecked}
@@ -192,7 +165,6 @@ class App extends React.Component {
 
         return (
             <div>
-                {drawer}
                 {appBar}
                 <BrowserRouter>
                     <Switch>

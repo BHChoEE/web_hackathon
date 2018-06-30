@@ -9,7 +9,6 @@ import axios from 'axios';
 class PaperItem extends React.Component {
     constructor(props) {
         super(props);
-        this.handleClick = this.handleClick.bind(this);
         this.state = {
             authors: [],
         };
@@ -34,9 +33,6 @@ class PaperItem extends React.Component {
             console.log(error);
         })
     }
-    handleClick() {
-        this.props.handleChooseTitle(this.props.paperId);
-    }
 
     searchSS = e => {
         var url = "https://www.semanticscholar.org/search?q=" + this.props.title + "&sort=relevance";
@@ -59,7 +55,9 @@ class PaperItem extends React.Component {
                 <ExpansionPanelDetails>
                     <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
                     <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
-                    <IconButton onClick={this.handleClick}><Icon>more_horiz</Icon></IconButton>
+                    <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)}>
+                        <Icon>more_horiz</Icon>
+                    </IconButton>
                     <Checkbox
                         onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId)}
                         checked={this.props.checked}
