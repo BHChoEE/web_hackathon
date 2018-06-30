@@ -61,12 +61,14 @@ class Login extends React.Component {
                     "username": this.state.field_user 
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                window.alert(userInfo['username']+': Log In Successfully!');
+                // window.alert(userInfo['username']+': Log In Successfully!');
+                this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
                 this.props.updateUsername(this.state.field_user);
                 this.props.history.push('/');
             }
             else {
-                window.alert(res.data);
+                //window.alert(res.data);
+                this.props.snackbarCb(res.data);
                 this.setState({
                     error: true,
                     field_pwd: "",
@@ -88,7 +90,8 @@ class Login extends React.Component {
             "username": "GUEST"
         };
         sessionStorage.setItem('GUEST', JSON.stringify(userInfo));
-        window.alert(userInfo['username']+': Log In Successfully!');
+        //window.alert(userInfo['username']+': Log In Successfully!');
+        this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
         this.props.history.push('/');
     }
 
