@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Login from './login.js';
 import SignUp from './signup.js';
 import Main from './main.js'
+import UserMenu from './userMenu.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -163,12 +164,14 @@ class App extends React.Component {
                         </ButtonBase>
                     </Typography>
                     {this.state.progress && <CircularProgress color="inherit" size={30}/>}
-                    <Button color="inherit" onClick={this.toggleDrawer(true)}>
+                    {/* <Button color="inherit" onClick={this.toggleDrawer(true)}>
                         Favorites
                     </Button>
                     <Button color="inherit" onClick={this.handleLogInOut}>
                         {this.state.username === "GUEST" ? "Login" : "Logout"}
-                    </Button>
+                    </Button> */}
+                    <UserMenu username={this.state.username} toggleDrawer={this.toggleDrawer(true)} 
+                    handleLogInOut={this.handleLogInOut}/>
                 </Toolbar>
             </AppBar>
         );
