@@ -88,8 +88,8 @@ class App extends React.Component {
         .then(res => {
             this.setState({favoritePapers: newFavoritePapers});
         })
-        .catch(err => {
-            console.log(err);
+        .catch(error => {
+            console.log(error);
         });
     }
 

@@ -61,9 +61,9 @@ app.post('/favorite/all', (req, res) => {
 });
 
 app.get('/*', (req, res) => {
-	res.sendFile(path.join(__dirname, '/public/index.html'), (err) => {
-		if (err) {
-			res.status(500).send(err);
+	res.sendFile(path.join(__dirname, '/public/index.html'), error => {
+		if (error) {
+			res.status(500).send(error);
 		}
 	});
 });

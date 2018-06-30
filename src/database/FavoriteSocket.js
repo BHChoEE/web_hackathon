@@ -36,10 +36,10 @@ class FavoriteSocket {
 
     removeFavorite(data, res) {
         const query = {paperId: data.paperId, username: data.username};
-        Favorite.findOneAndRemove(query, (err, result) => {
-            if (err) {
-                console.log(err);
-                res.send(err);
+        Favorite.findOneAndRemove(query, (error, result) => {
+            if (error) {
+                console.log(error);
+                res.send(error);
                 return;
             }
             else {
