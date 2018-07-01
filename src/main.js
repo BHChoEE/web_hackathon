@@ -25,6 +25,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 
 const styles = {
     root: {
@@ -46,6 +48,7 @@ class Main extends React.Component {
         this.state = {
             query: "",
             searchResultList: [],
+            historyList: [],
             referenceList: [],
             citationList: [],
             onlyInfluentialRefs: false,
@@ -53,6 +56,8 @@ class Main extends React.Component {
             displayMode: "List",
             hasChosenTitle: false,
             maxCitRefShown: 10,
+            anchorEl: null,
+            selectedIndex: -1,
         };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
@@ -61,6 +66,9 @@ class Main extends React.Component {
         this.handleModeChange = this.handleModeChange.bind(this);
         this.handleChooseFavorite = this.handleChooseFavorite.bind(this);
         this.handleMaxShownChange = this.handleMaxShownChange.bind(this);
+        this.handleListItemClick = this.handleListItemClick.bind(this);
+        this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
+        this.handleMenuClose = this.handleMenuClose.bind(this);
 
         document.title = "Paper Query";
     }
@@ -76,9 +84,12 @@ class Main extends React.Component {
                 this.setState({
                     query: "",
                     searchResultList: [],
+                    historyList: [],
                     referenceList: [],
                     citationList: [],
                     hasChosenTitle: false,
+                    anchorEl: null,
+                    selectedIndex: -1,
                 });
             }
         }
@@ -110,6 +121,7 @@ class Main extends React.Component {
                 searchResultList: searchResultList,
                 referenceList: [],
                 citationList: [],
+                hasChosenTitle: false,
             });
             this.props.setProgress(false);
         })
@@ -151,31 +163,30 @@ class Main extends React.Component {
             }
             makeList(response.data.references, referenceList);
             makeList(response.data.citations, citationList);
-            var searchResultList = [...this.state.searchResultList];
+            var historyList = [...this.state.historyList];
             var info = [response.data.year || "", response.data.venue || ""].join(" ")
             var paper = {
                 title: response.data.title.replace(/\s\s+/g, " "),
                 paperId: paperId,
                 info: info,
             };
-            if (paperId.includes("arXiv:")) {
-                searchResultList = [paper];
-            }
-            else {
-                var i = 0;
-                for (; i < searchResultList.length; i++) {
-                    if (searchResultList[i].paperId == paperId) {
-                        break;
-                    }
+            var selectedIndex = -1;
+            for (let i = 0; i < historyList.length; i++) {
+                if (historyList[i].paperId === paperId) {
+                    selectedIndex = i;
+                    break;
                 }
-                searchResultList = searchResultList.slice(0, i);
-                searchResultList.push(paper);
+            }
+            if (selectedIndex === -1) {
+                historyList.push(paper);
+                selectedIndex = historyList.length - 1;
             }
             this.setState({
                 referenceList: referenceList,
                 citationList: citationList,
-                searchResultList: searchResultList,
+                historyList: historyList,
                 hasChosenTitle: true,
+                selectedIndex: selectedIndex,
             });
             this.props.setProgress(false);
         })
@@ -190,7 +201,10 @@ class Main extends React.Component {
 
     handleChooseFavorite = paperId => () => {
         this.props.toggleDrawer(false)();
-        this.setState({searchResultList: []}, this.handleChooseTitle(paperId));
+        this.setState(
+            {searchResultList: []},
+            this.handleChooseTitle(paperId)
+        );
     }
 
     handleMaxShownChange(event) {
@@ -198,11 +212,25 @@ class Main extends React.Component {
         this.setState({maxCitRefShown: maxCitRefShown});
     }
 
+    handleListItemClick(event) {
+        this.setState({anchorEl: event.currentTarget});
+    };
+
+    handleMenuItemClick = index => () => {
+        this.setState(
+            {anchorEl: null},
+            this.handleChooseTitle(this.state.historyList[index].paperId)
+        );
+    };
+
+    handleMenuClose() {
+        this.setState({anchorEl: null});
+    };
+
     render() {
-        const { classes } = this.props;
-        var displayMode = this.state.displayMode;
-        var currentPaper = this.state.searchResultList[this.state.searchResultList.length - 1];
-        var favoritePapers = this.props.favoritePapers;
+        const { classes, favoritePapers, handleToggleChecked } = this.props;
+        var { displayMode, historyList, selectedIndex, anchorEl, hasChosenTitle, maxCitRefShown } = this.state;
+        var currentPaper = historyList[selectedIndex];
 
         var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
             var paperId = favoritePapers[title];
@@ -213,7 +241,7 @@ class Main extends React.Component {
                         <Icon>more_horiz</Icon>
                     </IconButton>
                     <Checkbox
-                        onChange={this.props.handleToggleChecked(title, paperId)}
+                        onChange={handleToggleChecked(title, paperId)}
                         checked={true}
                         icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                     />
@@ -249,16 +277,40 @@ class Main extends React.Component {
             />
         );
 
-        var searchResultList = (
+        var historyListMenuItems = historyList.map((paper, index) => (
+            <MenuItem key={paper.paperId} selected={index === selectedIndex} onClick={this.handleMenuItemClick(index)}>
+                {paper.title}
+            </MenuItem>
+        ));
+
+        var historyList = historyList.length === 0 ? null : (
+            <Grid container alignItems="center" justify="center">
+                <Typography variant="title">
+                    View history
+                </Typography>
+                <List component="nav">
+                    <ListItem button aria-haspopup="true" onClick={this.handleListItemClick}>
+                        <ListItemText primary={currentPaper.title} secondary={currentPaper.info} />
+                    </ListItem>
+                </List>
+                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleMenuClose}>
+                    {historyListMenuItems}
+                </Menu>
+                {/* <div>
+                </div> */}
+            </Grid>
+        );
+
+        var searchResultList = hasChosenTitle ? null : (
             <PaperList
                 list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.props.handleToggleChecked}
+                handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
             />
         );
 
-        var graph = this.state.hasChosenTitle && displayMode === "Graph" ? (
+        var graph = hasChosenTitle && displayMode === "Graph" ? (
             <PaperGraph
                 currentPaper={currentPaper}
                 referenceList={this.state.referenceList}
@@ -267,8 +319,6 @@ class Main extends React.Component {
             />
         ) : null;
 
-        var maxCitRefShown = this.state.maxCitRefShown;
-
         var referenceList = displayMode === "List" ? (
             <DetailedPaperList
                 title="References"
@@ -276,7 +326,7 @@ class Main extends React.Component {
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialRefs")}
                 list={this.state.referenceList.slice(0, maxCitRefShown)}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.props.handleToggleChecked}
+                handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
             />
         ) : null;
@@ -288,7 +338,7 @@ class Main extends React.Component {
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialCits")}
                 list={this.state.citationList.slice(0, maxCitRefShown)}
                 handleChooseTitle={this.handleChooseTitle}
-                handleToggleChecked={this.props.handleToggleChecked}
+                handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
             />
         ) : null;
@@ -298,12 +348,13 @@ class Main extends React.Component {
                 {drawer}
                 <Grid container style={{marginTop: 80}}>
                     {userInput}
+                    {historyList}
                     {searchResultList}
                     {
-                        this.state.displayMode === "List" &&
-                        <TextField
+                        hasChosenTitle && displayMode === "List" &&
+                        <TextField fullWidth
                             label="Maximum number shown"
-                            value={this.state.maxCitRefShown}
+                            value={maxCitRefShown}
                             onChange={this.handleMaxShownChange}
                             type="number"
                             InputLabelProps={{shrink: true}}
