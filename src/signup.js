@@ -43,7 +43,7 @@ class SignUp extends React.Component {
     SignUpPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
         if (this.state.username.match(re) === null){
-            this.props.setSnackbarMsg("Username must contain only english letters and numbers!");
+            this.props.setSnackbarMsg("Username must contain only english letters and numbers!", "error");
             this.setState({
                 usernameError: true,
                 username: ""
@@ -59,11 +59,11 @@ class SignUp extends React.Component {
             console.log(res.data);
             if (res.data._message == null) {
                 var username = res.data.username;
-                this.props.setSnackbarMsg('Sign Up successfully!' + username);
+                this.props.setSnackbarMsg('Sign Up successfully!', "success");
                 this.LogInPage();
             }
             else {
-                this.props.setSnackbarMsg(res.data._message + ': Already used or invalid.');
+                this.props.setSnackbarMsg(res.data._message + ': Already used or invalid.', "error");
                 this.setState({
                     usernameError: true,
                     username: "",
@@ -82,11 +82,11 @@ class SignUp extends React.Component {
     handleKeyPress = e => {
         if (e.key == "Enter") {
             if (this.state.username == "") {
-                this.props.setSnackbarMsg("Username cannot be empty!")
+                this.props.setSnackbarMsg("Username cannot be empty!", "error")
                 this.setState({usernameError: true});
             }
             else if (this.state.password == "") {
-                this.props.setSnackbarMsg("Password cannot be empty!")
+                this.props.setSnackbarMsg("Password cannot be empty!", "error")
                 this.setState({passwordError: true});
             }
             else {

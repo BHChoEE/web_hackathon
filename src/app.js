@@ -26,6 +26,7 @@ class App extends React.Component {
             toBePushed: "",
             snackbarOpen: false,
             snackbarMessage: "",
+            snackbarVariant: "",
         };
 
         this.handleLogInOut = this.handleLogInOut.bind(this);
@@ -128,8 +129,12 @@ class App extends React.Component {
         this.setState({toBePushed: "/"});
     }
 
-    setSnackbarMsg(msg) {
-        this.setState({snackbarOpen: true, snackbarMessage: msg});
+    setSnackbarMsg(msg, variant) {
+        this.setState({
+            snackbarOpen: true,
+            snackbarMessage: msg,
+            snackbarVariant: variant
+        });
     }
 
     closeSnackbar() {
@@ -173,7 +178,12 @@ class App extends React.Component {
 
         return (
             <div>
-                <SimpleSnackbar open={this.state.snackbarOpen} msg={this.state.snackbarMessage} onClose={this.closeSnackbar} />
+                <SimpleSnackbar
+                    open={this.state.snackbarOpen}
+                    msg={this.state.snackbarMessage}
+                    variant={this.state.snackbarVariant}
+                    onClose={this.closeSnackbar}
+                />
                 {appBar}
                 <BrowserRouter>
                     <Switch>

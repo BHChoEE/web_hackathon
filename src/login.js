@@ -43,7 +43,7 @@ class Login extends React.Component {
     LogInPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
         if (this.state.username.match(re) === null) {
-            this.props.setSnackbarMsg("Username must contain only english letters and numbers!");
+            this.props.setSnackbarMsg("Username must contain only english letters and numbers!", "error");
             this.setState({
                 usernameError: true,
                 username: ""
@@ -57,7 +57,7 @@ class Login extends React.Component {
         })
         .then(res => {
             if (res.data === 'User not found!') {
-                this.props.setSnackbarMsg(res.data);
+                this.props.setSnackbarMsg(res.data, "error");
                 this.setState({
                     usernameError: true,
                     password: "",
@@ -65,7 +65,7 @@ class Login extends React.Component {
                 });
             }
             else if (res.data === 'Password is wrong!') {
-                this.props.setSnackbarMsg(res.data);
+                this.props.setSnackbarMsg(res.data, "error");
                 this.setState({
                     passwordError: true,
                     password: "",
@@ -77,7 +77,7 @@ class Login extends React.Component {
                     username: this.state.username 
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                this.props.setSnackbarMsg('Log in successfully!');
+                this.props.setSnackbarMsg('Log in successfully!', "success");
                 this.props.updateUsername(this.state.username);
                 this.props.history.push('/');
             }
@@ -102,11 +102,11 @@ class Login extends React.Component {
     handleKeyPress = e => {
         if (e.key == "Enter") {
             if (this.state.username == "") {
-                this.props.setSnackbarMsg("Username cannot be empty!")
+                this.props.setSnackbarMsg("Username cannot be empty!", "error")
                 this.setState({usernameError: true});
             }
             else if (this.state.password == "") {
-                this.props.setSnackbarMsg("Password cannot be empty!")
+                this.props.setSnackbarMsg("Password cannot be empty!", "error")
                 this.setState({passwordError: true});
             }
             else {
