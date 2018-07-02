@@ -11,9 +11,9 @@ class DetailedPaperList extends React.Component {
         return this.props.list.length === 0 ? null : (
             <Grid item xs={12} sm={6}>
                 <Paper>
-                    <Grid container justify="center">
-                        <Typography variant="headline" component="h3">
-                            {this.props.title}
+                    <Grid container justify="center" style={{paddingTop: 20}}>
+                        <Typography variant="headline">
+                            {this.props.title + " (" + this.props.list.length + ")"}
                         </Typography>
                     </Grid>
                     <Grid container justify="flex-end">
@@ -28,13 +28,8 @@ class DetailedPaperList extends React.Component {
                             label="Only influential"
                         />
                     </Grid>
-                    <Grid container justify="center">
-                        <Typography component="h2">
-                            {"Total Paper Number: "+this.props.list.length}
-                        </Typography>
-                    </Grid>
                     <PaperList
-                        list={this.props.list}
+                        list={this.props.list.slice(0, this.props.maxShown)}
                         handleChooseTitle={this.props.handleChooseTitle}
                         onlyInfluential={this.props.onlyInfluential}
                         handleToggleChecked={this.props.handleToggleChecked}

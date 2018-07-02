@@ -42,7 +42,7 @@ class App extends React.Component {
         var username;
         var retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject == null) {
-            username = "GUEST";
+            username = "Guest";
         }
         else {
             retrievedObject = JSON.parse(retrievedObject);
@@ -52,11 +52,11 @@ class App extends React.Component {
     }
 
     handleLogInOut() {
-        if (this.state.username !== "GUEST") {
+        if (this.state.username !== "Guest") {
             // logout
             sessionStorage.clear();
             this.setState({
-                username: "GUEST",
+                username: "Guest",
                 favoritePapers: {},
             });
         }
@@ -100,8 +100,8 @@ class App extends React.Component {
 
     updateUsername(username) {
         this.setState({username: username}, () => {
-            // if username not GUEST, load back all favorite paper to favoritePapers
-            if (this.state.username != "GUEST") {
+            // if username not Guest, load back all favorite paper to favoritePapers
+            if (this.state.username != "Guest") {
                 axios.post('/favorite/all', {
                     username: this.state.username
                 })
@@ -137,21 +137,12 @@ class App extends React.Component {
         var appBar = (
             <AppBar style={{position: "fixed"}}>
                 <Toolbar>
-                    {/* <IconButton className={classes.menuButton} onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
-                        <MenuIcon />
-                    </IconButton> */}
                     <Typography variant="title" color="inherit" style={{flex: 1}}>
-                        <ButtonBase onClick={this.refresh} style={{fontSize: 20}} color="inherit">
+                        <ButtonBase onClick={this.refresh} style={{fontSize: 20, textTransform: "none"}} color="inherit">
                             Paper Query
                         </ButtonBase>
                     </Typography>
                     {this.state.progress && <CircularProgress color="inherit" size={30}/>}
-                    {/* <Button color="inherit" onClick={this.toggleDrawer(true)}>
-                        Favorites
-                    </Button>
-                    <Button color="inherit" onClick={this.handleLogInOut}>
-                        {this.state.username === "GUEST" ? "Login" : "Logout"}
-                    </Button> */}
                     <UserMenu username={this.state.username} toggleDrawer={this.toggleDrawer(true)} 
                     handleLogInOut={this.handleLogInOut}/>
                 </Toolbar>

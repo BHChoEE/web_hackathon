@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
@@ -285,7 +284,7 @@ class Main extends React.Component {
 
         var historyList = historyList.length === 0 ? null : (
             <Grid container alignItems="center" justify="center">
-                <Typography variant="title">
+                <Typography variant="display1">
                     View history
                 </Typography>
                 <List component="nav">
@@ -324,7 +323,8 @@ class Main extends React.Component {
                 title="References"
                 onlyInfluential={this.state.onlyInfluentialRefs}
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialRefs")}
-                list={this.state.referenceList.slice(0, maxCitRefShown)}
+                list={this.state.referenceList}
+                maxShown={maxCitRefShown}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
@@ -336,7 +336,8 @@ class Main extends React.Component {
                 title="Citations"
                 onlyInfluential={this.state.onlyInfluentialCits}
                 updateOnlyInfluential={this.updateOnlyInfluential("onlyInfluentialCits")}
-                list={this.state.citationList.slice(0, maxCitRefShown)}
+                list={this.state.citationList}
+                maxShown={maxCitRefShown}
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}

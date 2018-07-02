@@ -4,44 +4,56 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
 class UserMenu extends React.Component {
-  state = {
-    anchorEl: null,
-  };
+    constructor(props) {
+        super(props);
+        this.state = {
+            anchorEl: null,
+        };
 
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
+        this.handleClick = this.handleClick.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+    }
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
+    handleClick(event) {
+        this.setState({anchorEl: event.currentTarget});
+    };
 
-  render() {
-    const { anchorEl } = this.state;
+    handleClose() {
+        this.setState({anchorEl: null});
+    };
 
-    return (
-      <div>
-        <Button
-          aria-owns={anchorEl ? 'simple-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-          color="inherit"
-        >
-          {this.props.username}
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-        >
-          {/* <MenuItem color="secondary" >{this.props.username}</MenuItem> */}
-          <MenuItem color="inherit" onClick={this.props.toggleDrawer}>Favorites</MenuItem>
-          <MenuItem color="inherit" onClick={this.props.handleLogInOut}>{this.props.username === "GUEST" ? "Login" : "Logout"}</MenuItem>
-        </Menu>
-      </div>
-    );
-  }
+    render() {
+        var anchorEl = this.state.anchorEl;
+        var username = this.props.username;
+
+        return (
+            <div>
+                <Button
+                    aria-haspopup="true"
+                    onClick={this.handleClick}
+                    color="inherit"
+                    style={{textTransform: "none"}}
+                >
+                    {username}
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={this.handleClose}
+                >
+                    {
+                        username !== "Guest" &&
+                        <MenuItem color="inherit" onClick={this.props.toggleDrawer}>
+                            Favorites
+                        </MenuItem>
+                    }
+                    <MenuItem color="inherit" onClick={this.props.handleLogInOut}>
+                        {username === "Guest" ? "Login" : "Logout"}
+                    </MenuItem>
+                </Menu>
+            </div>
+        );
+    }
 }
 
 export default UserMenu;

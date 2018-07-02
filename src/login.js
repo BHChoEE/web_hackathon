@@ -96,9 +96,9 @@ class Login extends React.Component {
 
     GuestLogIn = e => {
         var userInfo  = {
-            "username": "GUEST"
+            "username": "Guest"
         };
-        sessionStorage.setItem('GUEST', JSON.stringify(userInfo));
+        sessionStorage.setItem('Guest', JSON.stringify(userInfo));
         //window.alert(userInfo['username']+': Log In Successfully!');
         this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
         this.props.history.push('/');
