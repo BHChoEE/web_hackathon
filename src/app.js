@@ -14,6 +14,7 @@ import SignUp from './signup.js';
 import Main from './main.js'
 import UserMenu from './userMenu.js';
 import SimpleSnackbar from './snackbar.js';
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -23,8 +24,8 @@ class App extends React.Component {
             drawerOpen: false,
             favoritePapers: {},
             toBePushed: "",
-            snackOpen: false,
-            snackMessage: ""
+            snackbarOpen: false,
+            snackbarMessage: "",
         };
 
         this.handleLogInOut = this.handleLogInOut.bind(this);
@@ -34,8 +35,8 @@ class App extends React.Component {
         this.updateUsername = this.updateUsername.bind(this);
         this.setProgress = this.setProgress.bind(this);
         this.refresh = this.refresh.bind(this);
-        this.handleSnackClose = this.handleSnackClose.bind(this)
-        this.snackbarCb = this.snackbarCb.bind(this);
+        this.setSnackbarMsg = this.setSnackbarMsg.bind(this);
+        this.closeSnackbar = this.closeSnackbar.bind(this);
     }
 
     componentDidMount() {
@@ -127,12 +128,14 @@ class App extends React.Component {
         this.setState({toBePushed: "/"});
     }
 
-    snackbarCb(msg){
-        this.setState({snackOpen: true, snackMessage: msg})
+    setSnackbarMsg(msg) {
+        this.setState({snackbarOpen: true, snackbarMessage: msg});
     }
-    handleSnackClose(){
-        this.setState({snackOpen: false});
+
+    closeSnackbar() {
+        this.setState({snackbarOpen: false});
     }
+
     render() {
         var appBar = (
             <AppBar style={{position: "fixed"}}>
@@ -160,17 +163,17 @@ class App extends React.Component {
                 toggleDrawer={this.toggleDrawer}
                 handleToggleChecked={this.handleToggleChecked}
                 setProgress={this.setProgress}
-                snackbarCb={this.snackbarCb}
+                setSnackbarMsg={this.setSnackbarMsg}
             />
         );
 
-        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} snackbarCb={this.snackbarCb}/>;
+        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} setSnackbarMsg={this.setSnackbarMsg} />;
 
-        var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} snackbarCb={this.snackbarCb}/>
+        var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} setSnackbarMsg={this.setSnackbarMsg} />
 
         return (
             <div>
-                <SimpleSnackbar open={this.state.snackOpen} handleClose={this.handleSnackClose} msg={this.state.snackMessage}/>
+                <SimpleSnackbar open={this.state.snackbarOpen} msg={this.state.snackbarMessage} onClose={this.closeSnackbar} />
                 {appBar}
                 <BrowserRouter>
                     <Switch>

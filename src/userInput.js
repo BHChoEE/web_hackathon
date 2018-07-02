@@ -34,12 +34,6 @@ class UserInput extends React.Component {
     //     window.open(url, "_blank");
     // }
 
-    // copyContent = e => {
-    //     document.getElementById("#userInput").select();
-    //     document.execCommand('copy');
-    //     window.alert("copied!");
-    // }
-
     handleKeyPress(e) {
         if(e.key == "Enter") {
             this.props.sendQuery();
@@ -68,14 +62,6 @@ class UserInput extends React.Component {
                         label="Graph mode"
                     />
                 </RadioGroup>
-                {/* <Grid item sm={2}>
-                    <Button  className={classes.button} variant="outlined" onClick={this.searchGoogle} color="secondary"> 
-                        Google <Icon className={classes.rightIcon}>send</Icon>
-                    </Button>
-                </Grid>
-                <Grid item sm={1}>    
-                    <IconButton onClick={this.copyContent} >copy</IconButton>
-                </Grid> */}
             </Grid>
         );
     }

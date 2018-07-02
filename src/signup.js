@@ -11,14 +11,14 @@ class SignUp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            field_user: "",
-            field_pwd: "",
-            error: false
+            username: "",
+            password: "",
+            usernameError: false,
+            passwordError: false,
         };
         document.title = "Sign Up";
         var retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
-            window.alert(retrievedObject + '\n Redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
@@ -35,38 +35,38 @@ class SignUp extends React.Component {
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
-            error: false
+            usernameError: false,
+            passwordError: false,
         });
     };
 
     SignUpPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
-        if (this.state.field_user.match(re) === null){
-            window.alert('Username must contain only english and number!');
+        if (this.state.username.match(re) === null){
+            this.props.setSnackbarMsg("Username must contain only english letters and numbers!");
             this.setState({
-                error: true,
-                field_user: ""
+                usernameError: true,
+                username: ""
             });
             return;
         }
         axios.post('/user/signup', {
-            username: this.state.field_user,
-            password: this.state.field_pwd,
+            username: this.state.username,
+            password: this.state.password,
             updateTime: Date()
         })
         .then(res => {
+            console.log(res.data);
             if (res.data._message == null) {
                 var username = res.data.username;
-                // window.alert('Sign Up successfully!' + username);
-                this.props.snackbarCb('Sign Up successfully!' + username);
+                this.props.setSnackbarMsg('Sign Up successfully!' + username);
                 this.LogInPage();
             }
             else {
-                // window.alert(res.data._message + ': already used or invalid');
-                this.props.snackbarCb(res.data._message + ': already used or invalid');
+                this.props.setSnackbarMsg(res.data._message + ': Already used or invalid.');
                 this.setState({
-                    error: true,
-                    field_user: "",
+                    usernameError: true,
+                    username: "",
                 });
             }
         })
@@ -81,11 +81,13 @@ class SignUp extends React.Component {
 
     handleKeyPress = e => {
         if (e.key == "Enter") {
-            if (this.state.field_user == "") {
-                window.alert("Username cannot be empty!")
+            if (this.state.username == "") {
+                this.props.setSnackbarMsg("Username cannot be empty!")
+                this.setState({usernameError: true});
             }
-            else if (this.state.field_pwd == "") {
-                window.alert("Password cannot be empty!")
+            else if (this.state.password == "") {
+                this.props.setSnackbarMsg("Password cannot be empty!")
+                this.setState({passwordError: true});
             }
             else {
                 this.SignUpPage(e);
@@ -98,16 +100,20 @@ class SignUp extends React.Component {
             <Card open style={{marginTop: 80}}>
                 <CardHeader title="Sign up" />
                 <CardContent>
-                    <TextField error={this.state.error} margin="dense" id="username" label="Name" type="username" autoFocus
-                    value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
+                    <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
+                    value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardContent>
-                    <TextField error={this.state.error} margin="dense" id="password" label="Password" type="password"
-                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
+                    <TextField error={this.state.passwordError} margin="dense" id="password" label="Password" type="password"
+                    value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
-                    <Button onClick={this.LogInPage} color="secondary">Return</Button>
-                    <Button onClick={this.SignUpPage} color="primary">Confirm</Button>
+                    <Button onClick={this.LogInPage} color="secondary" style={{textTransform: "none"}}>
+                        Log in
+                    </Button>
+                    <Button variant="raised" onClick={this.SignUpPage} color="primary" style={{textTransform: "none"}}>
+                        Sign up
+                    </Button>
                 </CardActions>
             </Card>
         );

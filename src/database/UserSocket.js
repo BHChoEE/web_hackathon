@@ -45,15 +45,15 @@ class UserSocket {
                 console.log(user.password)
                 console.log(this.encrypt(data.password))
                 if (user.password !== this.encrypt(data.password)) {
-                    res.send('password wrong');
+                    res.send('Password is wrong!');
                 }
                 else {
                     res.send('redirect');
                 }
             }
             else {
-                console.log('user not found');
-                res.send('user not found');
+                console.log('User not found!');
+                res.send('User not found!');
             }
         });
     };

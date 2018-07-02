@@ -11,14 +11,14 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            field_user: "",
-            field_pwd: "",
-            error: false
+            username: "",
+            password: "",
+            usernameError: false,
+            passwordError: false,
         };
         document.title = "Log In";
         var retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
-            window.alert(retrievedObject + '\n Redirect to Main...');
             var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
@@ -35,53 +35,50 @@ class Login extends React.Component {
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
-            error: false
+            usernameError: false,
+            passwordError: false,
         });
     };
 
     LogInPage = e => {
         var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
-        if (this.state.field_user.match(re) === null) {
-            window.alert('Username must contain only english and number!');
+        if (this.state.username.match(re) === null) {
+            this.props.setSnackbarMsg("Username must contain only english letters and numbers!");
             this.setState({
-                error:true,
-                field_user: ""
+                usernameError: true,
+                username: ""
             });
             return;
         }
         axios.post("/user/login", {
-            username: this.state.field_user,
-            password: this.state.field_pwd,
+            username: this.state.username,
+            password: this.state.password,
             updateTime: Date.now()
         })
         .then(res => {
-            if (res.data === 'user not found') {
-                //window.alert(res.data);
-                this.props.snackbarCb(res.data);
+            if (res.data === 'User not found!') {
+                this.props.setSnackbarMsg(res.data);
                 this.setState({
-                    error: true,
-                    field_pwd: "",
-                    field_user: ""
+                    usernameError: true,
+                    password: "",
+                    username: ""
                 });
             }
-            else if (res.data === 'password wrong') {
-                //window.alert(res.data);
-                this.props.snackbarCb(res.data);
+            else if (res.data === 'Password is wrong!') {
+                this.props.setSnackbarMsg(res.data);
                 this.setState({
-                    error: true,
-                    field_pwd: "",
-                    field_user: ""
+                    passwordError: true,
+                    password: "",
                 });
             }
             else {
                 sessionStorage.clear();
                 var userInfo = {
-                    "username": this.state.field_user 
+                    username: this.state.username 
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                // window.alert(userInfo['username']+': Log In Successfully!');
-                this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
-                this.props.updateUsername(this.state.field_user);
+                this.props.setSnackbarMsg('Log in successfully!');
+                this.props.updateUsername(this.state.username);
                 this.props.history.push('/');
             }
         })
@@ -96,21 +93,21 @@ class Login extends React.Component {
 
     GuestLogIn = e => {
         var userInfo  = {
-            "username": "Guest"
+            username: "Guest"
         };
         sessionStorage.setItem('Guest', JSON.stringify(userInfo));
-        //window.alert(userInfo['username']+': Log In Successfully!');
-        this.props.snackbarCb(userInfo['username']+': Log In Successfully!');
         this.props.history.push('/');
     }
 
     handleKeyPress = e => {
         if (e.key == "Enter") {
-            if (this.state.field_user == "") {
-                window.alert("Username cannot be empty!")
+            if (this.state.username == "") {
+                this.props.setSnackbarMsg("Username cannot be empty!")
+                this.setState({usernameError: true});
             }
-            else if (this.state.field_pwd == "") {
-                window.alert("Password cannot be empty!")
+            else if (this.state.password == "") {
+                this.props.setSnackbarMsg("Password cannot be empty!")
+                this.setState({passwordError: true});
             }
             else {
                 this.LogInPage(e);
@@ -123,17 +120,20 @@ class Login extends React.Component {
             <Card open style={{marginTop: 80}}>
                 <CardHeader title="Log in" />
                 <CardContent>
-                    <TextField error={this.state.error} margin="dense" id="username" label="name" type="username" autoFocus
-                    value={this.state.field_user} onChange={this.handleChange('field_user')} onKeyPress={this.handleKeyPress} fullWidth />
+                    <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
+                    value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardContent>
-                    <TextField error={this.state.error} margin="dense" id="password" label="password" type="password"
-                    value={this.state.field_pwd} onChange={this.handleChange('field_pwd')} onKeyPress={this.handleKeyPress} fullWidth />
+                    <TextField error={this.state.passwordError} margin="dense" id="password" label="Password" type="password"
+                    value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
-                    <Button onClick={this.GuestLogIn} color="secondary"> Guest </Button>
-                    <Button onClick={this.SignUpPage} color="secondary"> Sign Up </Button>
-                    <Button onClick={this.LogInPage} color="primary"> Log In </Button>
+                    <Button onClick={this.SignUpPage} color="secondary" style={{textTransform: "none"}}>
+                        Sign up
+                    </Button>
+                    <Button variant="raised" onClick={this.LogInPage} color="primary" style={{textTransform: "none"}}>
+                        Log in
+                    </Button>
                 </CardActions>
             </Card>
         );

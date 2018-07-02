@@ -12,6 +12,7 @@ class UserMenu extends React.Component {
 
         this.handleClick = this.handleClick.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
     }
 
     handleClick(event) {
@@ -21,6 +22,11 @@ class UserMenu extends React.Component {
     handleClose() {
         this.setState({anchorEl: null});
     };
+
+    handleMenuItemClick = callback => () => {
+        this.handleClose();
+        callback();
+    }
 
     render() {
         var anchorEl = this.state.anchorEl;
@@ -43,12 +49,12 @@ class UserMenu extends React.Component {
                 >
                     {
                         username !== "Guest" &&
-                        <MenuItem color="inherit" onClick={this.props.toggleDrawer}>
+                        <MenuItem color="inherit" onClick={this.handleMenuItemClick(this.props.toggleDrawer)}>
                             Favorites
                         </MenuItem>
                     }
-                    <MenuItem color="inherit" onClick={this.props.handleLogInOut}>
-                        {username === "Guest" ? "Login" : "Logout"}
+                    <MenuItem color="inherit" onClick={this.handleMenuItemClick(this.props.handleLogInOut)}>
+                        {username === "Guest" ? "Log in" : "Log out"}
                     </MenuItem>
                 </Menu>
             </div>
