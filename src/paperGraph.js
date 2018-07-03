@@ -4,28 +4,48 @@ import Graph from 'react-graph-vis';
 import Slider from '@material-ui/lab/Slider';
 import FormLabel from '@material-ui/core/FormLabel';
 
+const getWindowSize = () => {
+    var width = window.innerWidth
+    || document.documentElement.clientWidth
+    || document.body.clientWidth;
+    var height = window.innerHeight
+    || document.documentElement.clientHeight
+    || document.body.clientHeight;
+    return {width: width, height: height};
+}
+
 class PaperGraph extends React.Component {
     constructor(props) {
         super(props);
+        var size = getWindowSize();
         this.state = {
             maxCitRefShown: 3,
+            width: size.width,
+            height: size.height,
         };
         this.handleSliderChange = this.handleSliderChange.bind(this);
+        this.updateWindowSize = this.updateWindowSize.bind(this);
+    }
+
+    componentDidMount() {
+        this.updateWindowSize();
+        window.addEventListener('resize', this.updateWindowSize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowSize);
     }
 
     handleSliderChange(e, value) {
         this.setState({maxCitRefShown: value});
     }
 
-    render() {
-        var maxCitRefShown = this.state.maxCitRefShown;
-        var width = window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
-        var height = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
+    updateWindowSize() {
+        this.setState(getWindowSize());
+    }
 
+    render() {
+        var { maxCitRefShown, width, height } = this.state;
         height -= 260;
         width -= 30;
         var nodeSeparation = 50;
