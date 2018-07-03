@@ -26,6 +26,9 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 
 const styles = {
     root: {
@@ -57,6 +60,7 @@ class Main extends React.Component {
             maxCitRefShown: 10,
             anchorEl: null,
             selectedIndex: -1,
+            memesDialogOpen: false,
         };
         this.updateQuery = this.updateQuery.bind(this);
         this.sendQuery = this.sendQuery.bind(this);
@@ -96,6 +100,9 @@ class Main extends React.Component {
 
     sendQuery() {
         var query = this.state.query;
+        if (query === "memes") {
+            this.setState({memesDialogOpen: true});
+        }
         this.props.setProgress(true);
         axios.get("https://export.arxiv.org/api/query?search_query=" + query)
         .then(response => {
@@ -226,6 +233,10 @@ class Main extends React.Component {
         this.setState({anchorEl: null});
     };
 
+    closeMemesDialog = () => {
+        this.setState({memesDialogOpen: false});
+    };
+
     render() {
         const { classes, favoritePapers, handleToggleChecked } = this.props;
         var { displayMode, historyList, selectedIndex, anchorEl, hasChosenTitle, maxCitRefShown } = this.state;
@@ -264,6 +275,23 @@ class Main extends React.Component {
                     </div>
                 </div>
             </Drawer>
+        );
+
+        var memesDialog = (
+            <Dialog
+                open={this.state.memesDialogOpen}
+                onClose={this.closeMemesDialog}
+                maxWidth="md"
+            >
+                <DialogContent>
+                    <img src="./assets/memes.jpg" />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.closeMemesDialog} color="primary" style={{textTransform: "none"}}>
+                        "原來是memes的部分啊... OK OK"
+                    </Button>
+                </DialogActions>
+            </Dialog>
         );
 
         var userInput = (
@@ -347,6 +375,7 @@ class Main extends React.Component {
         return (
             <div className={classes.root}>
                 {drawer}
+                {memesDialog}
                 <Grid container style={{marginTop: 80}}>
                     {userInput}
                     {historyList}
