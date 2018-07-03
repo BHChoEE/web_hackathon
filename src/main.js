@@ -145,6 +145,10 @@ class Main extends React.Component {
     }
 
     handleChooseTitle = paperId => () => {
+        var { historyList, selectedIndex } = this.state;
+        if (selectedIndex >= 0 && paperId === historyList[selectedIndex].paperId) {
+            return;
+        }
         this.props.setProgress(true);
         axios.get("https://api.semanticscholar.org/v1/paper/" + paperId + "?include_unknown_references=false")
         .then(response => {
@@ -169,30 +173,30 @@ class Main extends React.Component {
             }
             makeList(response.data.references, referenceList);
             makeList(response.data.citations, citationList);
-            var historyList = [...this.state.historyList];
+            var newHistoryList = [...historyList];
             var info = [response.data.year || "", response.data.venue || ""].join(" ")
             var paper = {
                 title: response.data.title.replace(/\s\s+/g, " "),
                 paperId: paperId,
                 info: info,
             };
-            var selectedIndex = -1;
-            for (let i = 0; i < historyList.length; i++) {
-                if (historyList[i].paperId === paperId) {
-                    selectedIndex = i;
+            var newSelectedIndex = -1;
+            for (let i = 0; i < newHistoryList.length; i++) {
+                if (newHistoryList[i].paperId === paperId) {
+                    newSelectedIndex = i;
                     break;
                 }
             }
-            if (selectedIndex === -1) {
-                historyList.push(paper);
-                selectedIndex = historyList.length - 1;
+            if (newSelectedIndex === -1) {
+                newHistoryList.push(paper);
+                newSelectedIndex = newHistoryList.length - 1;
             }
             this.setState({
                 referenceList: referenceList,
                 citationList: citationList,
-                historyList: historyList,
+                historyList: newHistoryList,
                 hasChosenTitle: true,
-                selectedIndex: selectedIndex,
+                selectedIndex: newSelectedIndex,
             });
             this.props.setProgress(false);
         })
@@ -310,7 +314,7 @@ class Main extends React.Component {
             </MenuItem>
         ));
 
-        var historyList = historyList.length === 0 ? null : (
+        var history = historyList.length === 0 ? null : (
             <Grid container alignItems="center" justify="center">
                 <Typography variant="display1">
                     View history
@@ -323,8 +327,6 @@ class Main extends React.Component {
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleMenuClose}>
                     {historyListMenuItems}
                 </Menu>
-                {/* <div>
-                </div> */}
             </Grid>
         );
 
@@ -378,7 +380,7 @@ class Main extends React.Component {
                 {memesDialog}
                 <Grid container style={{marginTop: 80}}>
                     {userInput}
-                    {historyList}
+                    {history}
                     {searchResultList}
                     {
                         hasChosenTitle && displayMode === "List" &&
