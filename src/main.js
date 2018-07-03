@@ -327,6 +327,11 @@ class Main extends React.Component {
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleMenuClose}>
                     {historyListMenuItems}
                 </Menu>
+                <Checkbox
+                    onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId)}
+                    checked={Object.values(favoritePapers).includes(currentPaper.paperId)}
+                    icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                />
             </Grid>
         );
 
