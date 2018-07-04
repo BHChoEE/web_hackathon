@@ -3,20 +3,15 @@ import axios from 'axios';
 import UserInput from './userInput';
 import PaperList from './paperList';
 import DetailedPaperList from './detailedPaperList';
+import ActionButtons from './actionButtons';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import Switch from '@material-ui/core/Switch';
 const JSSoup = require('jssoup').default;
 import PaperGraph from './paperGraph';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Drawer from '@material-ui/core/Drawer';
-import StarIcon from '@material-ui/icons/Star';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -257,20 +252,17 @@ class Main extends React.Component {
 
         var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
             var { paperId, url } = favoritePapers[title];
-            var iconSrc = "./assets/" + (url.includes("arxiv") ? "arxiv.ico" : "ss.png");
             return (
                 <ListItem key={title}>
                     <ListItemText primary={title} style={{flex: 1}} />
-                    <IconButton onClick={this.openURL(url)} color="primary">
-                        <img src={iconSrc} width="24" height="24" />
-                    </IconButton>
-                    <IconButton onClick={this.handleChooseFavorite(paperId)} color="primary">
-                        <Icon>send</Icon>
-                    </IconButton>
-                    <Checkbox
-                        onChange={handleToggleChecked(title, paperId, url)}
+                    <ActionButtons
+                        title={title}
+                        paperId={paperId}
+                        url={url}
                         checked={true}
-                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                        openURL={this.openURL}
+                        handleChoose={this.handleChooseFavorite}
+                        handleToggleChecked={handleToggleChecked}
                     />
                 </ListItem>
             );

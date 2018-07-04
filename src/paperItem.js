@@ -1,11 +1,9 @@
 import React from 'react';
-import { ListItemText, ListItemIcon, IconButton, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Icon, FormLabel, Grid } from '@material-ui/core';
+import { ListItemText, ListItemIcon, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
 import StarIcon from '@material-ui/icons/Star';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Checkbox from '@material-ui/core/Checkbox';
-import Favorite from '@material-ui/icons/Favorite';
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import axios from 'axios';
+import ActionButtons from './actionButtons';
 
 class PaperItem extends React.Component {
     constructor(props) {
@@ -36,7 +34,6 @@ class PaperItem extends React.Component {
     }
 
     render() {
-        var iconSrc = "./assets/" + (this.props.url.includes("arxiv") ? "arxiv.ico" : "ss.png");
         return (
             <ExpansionPanel onClick={this.handleMore}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -51,16 +48,14 @@ class PaperItem extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
-                    <IconButton onClick={this.props.openURL(this.props.url)} color="primary">
-                            <img src={iconSrc} width="24" height="24" />
-                    </IconButton>
-                    <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)} color="primary">
-                        <Icon>send</Icon>
-                    </IconButton>
-                    <Checkbox
-                        onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId, this.props.url)}
+                    <ActionButtons
+                        title={this.props.title}
+                        paperId={this.props.paperId}
+                        url={this.props.url}
                         checked={this.props.checked}
-                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                        openURL={this.props.openURL}
+                        handleChoose={this.props.handleChooseTitle}
+                        handleToggleChecked={this.props.handleToggleChecked}
                     />
                 </ExpansionPanelDetails>
             </ExpansionPanel>
