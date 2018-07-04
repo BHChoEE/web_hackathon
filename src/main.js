@@ -257,11 +257,12 @@ class Main extends React.Component {
 
         var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
             var { paperId, url } = favoritePapers[title];
+            var iconSrc = "./assets/" + (url.includes("arxiv") ? "arxiv.ico" : "ss.png");
             return (
                 <ListItem key={title}>
                     <ListItemText primary={title} style={{flex: 1}} />
                     <IconButton onClick={this.openURL(url)} color="primary">
-                        {url.includes("arxiv") ? "Ar" : "SS"}
+                        <img src={iconSrc} width="24" height="24" />
                     </IconButton>
                     <IconButton onClick={this.handleChooseFavorite(paperId)} color="primary">
                         <Icon>send</Icon>

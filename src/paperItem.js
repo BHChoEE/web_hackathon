@@ -36,6 +36,7 @@ class PaperItem extends React.Component {
     }
 
     render() {
+        var iconSrc = "./assets/" + (this.props.url.includes("arxiv") ? "arxiv.ico" : "ss.png");
         return (
             <ExpansionPanel onClick={this.handleMore}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -51,7 +52,7 @@ class PaperItem extends React.Component {
                 <ExpansionPanelDetails>
                     <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
                     <IconButton onClick={this.props.openURL(this.props.url)} color="primary">
-                        {this.props.url.includes("arxiv") ? "Ar" : "SS"}
+                            <img src={iconSrc} width="24" height="24" />
                     </IconButton>
                     <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)} color="primary">
                         <Icon>send</Icon>
