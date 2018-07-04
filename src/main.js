@@ -260,6 +260,7 @@ class Main extends React.Component {
                         paperId={paperId}
                         url={url}
                         checked={true}
+                        username={this.props.username}
                         openURL={this.openURL}
                         handleChoose={this.handleChooseFavorite}
                         handleToggleChecked={handleToggleChecked}
@@ -329,11 +330,14 @@ class Main extends React.Component {
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleMenuClose}>
                     {historyListMenuItems}
                 </Menu>
-                <Checkbox
-                    onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId, currentPaper.url)}
-                    checked={Object.keys(favoritePapers).includes(currentPaper.title)}
-                    icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                />
+                {
+                    this.props.username !== "Guest" &&
+                    <Checkbox
+                        onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId, currentPaper.url)}
+                        checked={Object.keys(favoritePapers).includes(currentPaper.title)}
+                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                    />
+                }
             </Grid>
         );
 
@@ -344,6 +348,7 @@ class Main extends React.Component {
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
                 openURL={this.openURL}
+                username={this.props.username}
             />
         );
 
@@ -367,6 +372,7 @@ class Main extends React.Component {
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
                 openURL={this.openURL}
+                username={this.props.username}
             />
         ) : null;
 
@@ -381,6 +387,7 @@ class Main extends React.Component {
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
                 openURL={this.openURL}
+                username={this.props.username}
             />
         ) : null;
 

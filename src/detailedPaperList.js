@@ -35,6 +35,7 @@ class DetailedPaperList extends React.Component {
                         handleToggleChecked={this.props.handleToggleChecked}
                         favoritePapers={this.props.favoritePapers}
                         openURL={this.props.openURL}
+                        username={this.props.username}
                     />
                 </Paper>
             </Grid>

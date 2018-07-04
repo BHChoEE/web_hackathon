@@ -10,7 +10,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.background.paper,
     },
 });
-  
+
 class PaperList extends React.Component {
     constructor(props) {
         super(props);
@@ -36,6 +36,7 @@ class PaperList extends React.Component {
                 handleChooseTitle={this.props.handleChooseTitle}
                 handleToggleChecked={this.props.handleToggleChecked}
                 openURL={this.props.openURL}
+                username={this.props.username}
             />
         ));
         return (

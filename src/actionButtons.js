@@ -21,13 +21,16 @@ class ActionButtons extends React.Component {
                         <Icon>send</Icon>
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Add to favorite" placement="top">
-                    <Checkbox
-                        onChange={handleToggleChecked(title, paperId, url)}
-                        checked={checked}
-                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                    />
-                </Tooltip>
+                {
+                    this.props.username !== "Guest" &&
+                    <Tooltip title="Add to favorite" placement="top">
+                        <Checkbox
+                            onChange={handleToggleChecked(title, paperId, url)}
+                            checked={checked}
+                            icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+                        />
+                    </Tooltip>
+                }
             </div>
         );
     }
