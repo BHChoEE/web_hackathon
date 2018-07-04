@@ -35,6 +35,7 @@ class PaperList extends React.Component {
                 isInfluential={paper.isInfluential}
                 handleChooseTitle={this.props.handleChooseTitle}
                 handleToggleChecked={this.props.handleToggleChecked}
+                openURL={this.props.openURL}
             />
         ));
         return (

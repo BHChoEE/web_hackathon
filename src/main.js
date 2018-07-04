@@ -72,6 +72,7 @@ class Main extends React.Component {
         this.handleListItemClick = this.handleListItemClick.bind(this);
         this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
+        this.openURL = this.openURL.bind(this);
 
         document.title = "Paper Query";
     }
@@ -245,6 +246,10 @@ class Main extends React.Component {
         this.setState({memesDialogOpen: false});
     };
 
+    openURL = url => () => {
+        window.open(url, "_blank");
+    }
+
     render() {
         const { classes, favoritePapers, handleToggleChecked } = this.props;
         var { displayMode, historyList, selectedIndex, anchorEl, hasChosenTitle, maxCitRefShown } = this.state;
@@ -255,8 +260,11 @@ class Main extends React.Component {
             return (
                 <ListItem key={title}>
                     <ListItemText primary={title} style={{flex: 1}} />
-                    <IconButton onClick={this.handleChooseFavorite(paperId)}>
-                        <Icon>more_horiz</Icon>
+                    <IconButton onClick={this.openURL(url)} color="primary">
+                        {url.includes("arxiv") ? "Ar" : "SS"}
+                    </IconButton>
+                    <IconButton onClick={this.handleChooseFavorite(paperId)} color="primary">
+                        <Icon>send</Icon>
                     </IconButton>
                     <Checkbox
                         onChange={handleToggleChecked(title, paperId, url)}
@@ -269,23 +277,16 @@ class Main extends React.Component {
 
         var drawer = (
             <Drawer open={this.props.drawerOpen} onClose={this.props.toggleDrawer(false)}>
-                <div
-                    tabIndex={0}
-                    role="button"
+                <Typography
+                    variant="display1"
+                    color="inherit"
+                    style={{textAlign: "center", marginTop: 20}}
                 >
-                    <Typography
-                        variant="display1"
-                        color="inherit"
-                        style={{flex: 1, textAlign: "center", marginTop: 20}}
-                    >
-                        Favorite Papers
-                    </Typography>
-                    <div style={{width: 500}}>
-                        <List>
-                            {favoritePaperListItems}
-                        </List>
-                    </div>
-                </div>
+                    Favorite Papers
+                </Typography>
+                <List>
+                    {favoritePaperListItems}
+                </List>
             </Drawer>
         );
 
@@ -349,6 +350,7 @@ class Main extends React.Component {
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
+                openURL={this.openURL}
             />
         );
 
@@ -371,6 +373,7 @@ class Main extends React.Component {
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
+                openURL={this.openURL}
             />
         ) : null;
 
@@ -384,6 +387,7 @@ class Main extends React.Component {
                 handleChooseTitle={this.handleChooseTitle}
                 handleToggleChecked={handleToggleChecked}
                 favoritePapers={favoritePapers}
+                openURL={this.openURL}
             />
         ) : null;
 

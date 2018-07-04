@@ -13,7 +13,6 @@ class PaperItem extends React.Component {
         this.state = {
             authors: [],
         };
-        this.searchSS = this.searchSS.bind(this);
     }
     handleMore = e => {
         if(this.state.authors.length!=0){
@@ -36,11 +35,6 @@ class PaperItem extends React.Component {
         })
     }
 
-    searchSS() {
-        var url = this.props.url;
-        window.open(url, "_blank");
-    }
-
     render() {
         return (
             <ExpansionPanel onClick={this.handleMore}>
@@ -56,11 +50,11 @@ class PaperItem extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
-                    <IconButton onClick={this.searchSS} color="secondary">
+                    <IconButton onClick={this.props.openURL(this.props.url)} color="primary">
                         {this.props.url.includes("arxiv") ? "Ar" : "SS"}
                     </IconButton>
-                    <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)}>
-                        <Icon>more_horiz</Icon>
+                    <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)} color="primary">
+                        <Icon>send</Icon>
                     </IconButton>
                     <Checkbox
                         onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId, this.props.url)}
