@@ -6,12 +6,14 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import axios from 'axios';
+
 class PaperItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             authors: [],
         };
+        this.searchSS = this.searchSS.bind(this);
     }
     handleMore = e => {
         if(this.state.authors.length!=0){
@@ -34,8 +36,8 @@ class PaperItem extends React.Component {
         })
     }
 
-    searchSS = e => {
-        var url = "https://www.semanticscholar.org/search?q=" + this.props.title + "&sort=relevance";
+    searchSS() {
+        var url = this.props.url;
         window.open(url, "_blank");
     }
 
@@ -54,12 +56,14 @@ class PaperItem extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
-                    <IconButton onClick={this.searchSS} color="secondary">S</IconButton>
+                    <IconButton onClick={this.searchSS} color="secondary">
+                        {this.props.url.includes("arxiv") ? "Ar" : "SS"}
+                    </IconButton>
                     <IconButton onClick={this.props.handleChooseTitle(this.props.paperId)}>
                         <Icon>more_horiz</Icon>
                     </IconButton>
                     <Checkbox
-                        onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId)}
+                        onChange={this.props.handleToggleChecked(this.props.title, this.props.paperId, this.props.url)}
                         checked={this.props.checked}
                         icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                     />

@@ -120,7 +120,7 @@ class PaperGraph extends React.Component {
                 labelHighlightBold: false,
                 color: {
                     color: nodeColor,
-                    hightlight: nodeColor,
+                    highlight: nodeColor,
                     hover: nodeColor,
                 },
             },

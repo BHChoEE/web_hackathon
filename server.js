@@ -41,6 +41,7 @@ app.post('/favorite/add', (req, res) => {
 	var favorite = {
 		title: req.body.title,
 		paperId: req.body.paperId,
+		url: req.body.url,
 		username: req.body.username,
 	};
 	favoriteSocket.addFavorite(favorite, res);
@@ -48,7 +49,6 @@ app.post('/favorite/add', (req, res) => {
 
 app.post('/favorite/remove', (req, res) => {
 	var favorite = {
-		title: req.body.title,
 		paperId: req.body.paperId,
 		username: req.body.username,
 	};

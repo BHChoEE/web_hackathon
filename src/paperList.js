@@ -28,6 +28,7 @@ class PaperList extends React.Component {
             <PaperItem
                 title={paper.title}
                 paperId={paper.paperId}
+                url={paper.url}
                 key={paper.paperId}
                 info={paper.info}
                 checked={this.props.favoritePapers[paper.title] !== undefined}

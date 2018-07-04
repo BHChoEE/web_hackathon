@@ -116,9 +116,11 @@ class Main extends React.Component {
                 if (parseInt(year) >= 2008) {
                     var title = find("title", entry);
                     var paperId = find("id", entry).split("/abs/")[1].split("v")[0];
+                    var url = entry.find("link").attrs.href;
                     searchResultList.push({
                         title: title.replace(/\s\s+/g, " "),
                         paperId: "arXiv:" + paperId,
+                        url: url,
                         info: year + " ArXiv",
                     });
                 }
@@ -160,6 +162,7 @@ class Main extends React.Component {
                     var paperObj = {
                         title: paper.title,
                         paperId: paper.paperId,
+                        url: paper.url,
                         isInfluential: paper.isInfluential,
                         info: info,
                     };
@@ -178,6 +181,7 @@ class Main extends React.Component {
             var paper = {
                 title: response.data.title.replace(/\s\s+/g, " "),
                 paperId: paperId,
+                url: response.data.url,
                 info: info,
             };
             var newSelectedIndex = -1;
@@ -247,7 +251,7 @@ class Main extends React.Component {
         var currentPaper = historyList[selectedIndex];
 
         var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
-            var paperId = favoritePapers[title];
+            var { paperId, url } = favoritePapers[title];
             return (
                 <ListItem key={title}>
                     <ListItemText primary={title} style={{flex: 1}} />
@@ -255,7 +259,7 @@ class Main extends React.Component {
                         <Icon>more_horiz</Icon>
                     </IconButton>
                     <Checkbox
-                        onChange={handleToggleChecked(title, paperId)}
+                        onChange={handleToggleChecked(title, paperId, url)}
                         checked={true}
                         icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                     />
@@ -332,8 +336,8 @@ class Main extends React.Component {
                     {historyListMenuItems}
                 </Menu>
                 <Checkbox
-                    onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId)}
-                    checked={Object.values(favoritePapers).includes(currentPaper.paperId)}
+                    onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId, currentPaper.url)}
+                    checked={Object.keys(favoritePapers).includes(currentPaper.title)}
                     icon={<FavoriteBorder />} checkedIcon={<Favorite />}
                 />
             </Grid>

@@ -11,6 +11,7 @@ class FavoriteSocket {
         var favorite = {
             title: data.title,
             paperId: data.paperId,
+            url: data.url,
             username: data.username
         };
         var query = {
