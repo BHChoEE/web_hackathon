@@ -48,7 +48,7 @@ class PaperGraph extends React.Component {
         var { maxCitRefShown, width, height } = this.state;
         height -= 260;
         width -= 30;
-        var nodeSeparation = 50;
+        var nodeSeparation = 40;
         var nodeWidth = (width - nodeSeparation*(maxCitRefShown - 1)) / maxCitRefShown;
         var currentPaper = this.props.currentPaper;
         var nodes = [{
@@ -85,6 +85,8 @@ class PaperGraph extends React.Component {
         
         const graph = { nodes: nodes, edges: edges };
 
+        const nodeColor = "#92e9dc";
+
         const options = {
             layout: {
                 hierarchical: {
@@ -106,6 +108,21 @@ class PaperGraph extends React.Component {
             height: height + "px",
             nodes: {
                 shape: "box",
+                borderWidth: 0,
+                labelHighlightBold: false,
+                color: nodeColor,
+                font: {
+                    size: 18,
+                },
+            },
+            edges: {
+                width: 5,
+                labelHighlightBold: false,
+                color: {
+                    color: nodeColor,
+                    hightlight: nodeColor,
+                    hover: nodeColor,
+                },
             },
         };
 

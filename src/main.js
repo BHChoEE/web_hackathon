@@ -269,8 +269,12 @@ class Main extends React.Component {
                     tabIndex={0}
                     role="button"
                 >
-                    <Typography variant="title" color="inherit" style={{flex: 1}}>
-                        <StarIcon /> Favorite Papers
+                    <Typography
+                        variant="display1"
+                        color="inherit"
+                        style={{flex: 1, textAlign: "center", marginTop: 20}}
+                    >
+                        Favorite Papers
                     </Typography>
                     <div style={{width: 500}}>
                         <List>
