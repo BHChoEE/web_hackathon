@@ -7,7 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 class ActionButtons extends React.Component {
     render() {
-        var { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked } = this.props.
+        var { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked } = this.props;
         var iconSrc = "./assets/" + (url.includes("arxiv") ? "arxiv.ico" : "ss.png");
         return (
             <div>
