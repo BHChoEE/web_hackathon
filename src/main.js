@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserInput from './userInput';
 import PaperList from './paperList';
 import DetailedPaperList from './detailedPaperList';
-import ActionButtons from './actionButtons';
+import { FavoriteCheckbox, ActionButtons } from './actionButtons';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -15,9 +15,6 @@ import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import Favorite from '@material-ui/icons/Favorite';
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
@@ -330,14 +327,14 @@ class Main extends React.Component {
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleMenuClose}>
                     {historyListMenuItems}
                 </Menu>
-                {
-                    this.props.username !== "Guest" &&
-                    <Checkbox
-                        onChange={this.props.handleToggleChecked(currentPaper.title, currentPaper.paperId, currentPaper.url)}
-                        checked={Object.keys(favoritePapers).includes(currentPaper.title)}
-                        icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                    />
-                }
+                <FavoriteCheckbox
+                    title={currentPaper.title}
+                    paperId={currentPaper.paperId}
+                    url={currentPaper.url}
+                    checked={Object.keys(favoritePapers).includes(currentPaper.title)}
+                    username={this.props.username}
+                    handleToggleChecked={this.props.handleToggleChecked}
+                />
             </Grid>
         );
 

@@ -3,7 +3,7 @@ import { ListItemText, ListItemIcon, ExpansionPanel, ExpansionPanelSummary, Expa
 import StarIcon from '@material-ui/icons/Star';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import axios from 'axios';
-import ActionButtons from './actionButtons';
+import { ActionButtons } from './actionButtons';
 
 class PaperItem extends React.Component {
     constructor(props) {

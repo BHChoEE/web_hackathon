@@ -5,9 +5,26 @@ import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import Tooltip from '@material-ui/core/Tooltip';
 
+function FavoriteCheckbox(props) {
+    var { title, paperId, url, checked, handleToggleChecked, username } = props;
+    if (username === "Guest") {
+        return null;
+    }
+    var tooltipTitle = (checked ? "Remove from" : "Add to") + " favorite";
+    return (
+        <Tooltip title={tooltipTitle} placement="top">
+            <Checkbox
+                onChange={handleToggleChecked(title, paperId, url)}
+                checked={checked}
+                icon={<FavoriteBorder />} checkedIcon={<Favorite />}
+            />
+        </Tooltip>
+    );
+}
+
 class ActionButtons extends React.Component {
     render() {
-        var { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked } = this.props;
+        var { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked, username } = this.props;
         var iconSrc = "./assets/" + (url.includes("arxiv") ? "arxiv.ico" : "ss.png");
         return (
             <div>
@@ -21,19 +38,17 @@ class ActionButtons extends React.Component {
                         <Icon>send</Icon>
                     </IconButton>
                 </Tooltip>
-                {
-                    this.props.username !== "Guest" &&
-                    <Tooltip title="Add to favorite" placement="top">
-                        <Checkbox
-                            onChange={handleToggleChecked(title, paperId, url)}
-                            checked={checked}
-                            icon={<FavoriteBorder />} checkedIcon={<Favorite />}
-                        />
-                    </Tooltip>
-                }
+                <FavoriteCheckbox
+                    title={title}
+                    paperId={paperId}
+                    url={url}
+                    checked={checked}
+                    username={username}
+                    handleToggleChecked={handleToggleChecked}
+                />
             </div>
         );
     }
 }
 
-export default ActionButtons;
+export { FavoriteCheckbox, ActionButtons };
