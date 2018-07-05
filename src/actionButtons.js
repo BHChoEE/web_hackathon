@@ -6,11 +6,11 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import Tooltip from '@material-ui/core/Tooltip';
 
 function FavoriteCheckbox(props) {
-    var { title, paperId, url, checked, handleToggleChecked, username } = props;
+    const { title, paperId, url, checked, handleToggleChecked, username } = props;
     if (username === "Guest") {
         return null;
     }
-    var tooltipTitle = (checked ? "Remove from" : "Add to") + " favorite";
+    const tooltipTitle = `${checked ? "Remove from" : "Add to"} favorite`;
     return (
         <Tooltip title={tooltipTitle} placement="top">
             <Checkbox
@@ -22,33 +22,31 @@ function FavoriteCheckbox(props) {
     );
 }
 
-class ActionButtons extends React.Component {
-    render() {
-        var { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked, username } = this.props;
-        var iconSrc = "./assets/" + (url.includes("arxiv") ? "arxiv.ico" : "ss.png");
-        return (
-            <div>
-                <Tooltip title="Visit" placement="top">
-                    <IconButton onClick={openURL(url)} color="primary">
-                        <img src={iconSrc} width="24" height="24" />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Send" placement="top">
-                    <IconButton onClick={handleChoose(paperId)} color="primary">
-                        <Icon>send</Icon>
-                    </IconButton>
-                </Tooltip>
-                <FavoriteCheckbox
-                    title={title}
-                    paperId={paperId}
-                    url={url}
-                    checked={checked}
-                    username={username}
-                    handleToggleChecked={handleToggleChecked}
-                />
-            </div>
-        );
-    }
+function ActionButtons(props) {
+    const { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked, username } = props;
+    const iconSrc = `./assets/${url.includes("arxiv") ? "arxiv.ico" : "ss.png"}`;
+    return (
+        <div>
+            <Tooltip title="Visit" placement="top">
+                <IconButton onClick={openURL(url)} color="primary">
+                    <img src={iconSrc} width="24" height="24" />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Send" placement="top">
+                <IconButton onClick={handleChoose(paperId)} color="primary">
+                    <Icon>send</Icon>
+                </IconButton>
+            </Tooltip>
+            <FavoriteCheckbox
+                title={title}
+                paperId={paperId}
+                url={url}
+                checked={checked}
+                username={username}
+                handleToggleChecked={handleToggleChecked}
+            />
+        </div>
+    );
 }
 
 export { FavoriteCheckbox, ActionButtons };

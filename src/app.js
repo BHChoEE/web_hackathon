@@ -1,19 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import ButtonBase from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import List from '@material-ui/core/List';
-import Login from './login.js';
-import SignUp from './signup.js';
-import Main from './main.js'
-import UserMenu from './userMenu.js';
-import SimpleSnackbar from './snackbar.js';
+import Login from './login';
+import SignUp from './signup';
+import Main from './main';
+import UserMenu from './userMenu';
+import SimpleSnackbar from './snackbar';
 
 class App extends React.Component {
     constructor(props) {
@@ -41,12 +39,11 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        var username;
-        var retrievedObject = sessionStorage.getItem('userInfo');
+        let username;
+        let retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject == null) {
             username = "Guest";
-        }
-        else {
+        } else {
             retrievedObject = JSON.parse(retrievedObject);
             username = retrievedObject.username;
         }
@@ -62,7 +59,7 @@ class App extends React.Component {
                 favoritePapers: {},
             });
         }
-        this.setState({toBePushed: "/login"});
+        this.setState({ toBePushed: "/login" });
     }
 
     toggleDrawer = state => () => {
@@ -72,53 +69,52 @@ class App extends React.Component {
     }
 
     handleToggleChecked = (title, paperId, url) => () => {
-        var newFavoritePapers = {...this.state.favoritePapers};
-        var action = '';
+        let newFavoritePapers = { ...this.state.favoritePapers };
+        let action = '';
         if (newFavoritePapers[title] === undefined) {
-            newFavoritePapers[title] = {paperId: paperId, url: url};
+            newFavoritePapers[title] = { paperId, url };
             action = 'add';
-        }
-        else {
+        } else {
             delete newFavoritePapers[title];
             action = 'remove';
         }
 
-        axios.post('/favorite/' + action, {
-            title: title,
-            paperId: paperId,
-            url: url,
-            username: this.state.username
+        axios.post(`/favorite/${action}`, {
+            title,
+            paperId,
+            url,
+            username: this.state.username,
         })
-        .then(res => {
-            this.setState({favoritePapers: newFavoritePapers});
+        .then((res) => {
+            this.setState({ favoritePapers: newFavoritePapers });
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
     }
 
     resetToBePushed() {
-        this.setState({toBePushed: ""});
+        this.setState({ toBePushed: "" });
     }
 
     updateUsername(username) {
-        this.setState({username: username}, () => {
+        this.setState({ username }, () => {
             // if username not Guest, load back all favorite paper to favoritePapers
-            if (this.state.username != "Guest") {
+            if (this.state.username !== "Guest") {
                 axios.post('/favorite/all', {
-                    username: this.state.username
+                    username: this.state.username,
                 })
-                .then(res => {
-                    var newFavoritePapers = {};
-                    res['data'].forEach(paper => {
+                .then((res) => {
+                    let newFavoritePapers = {};
+                    res.data.forEach((paper) => {
                         newFavoritePapers[paper.title] = {
                             paperId: paper.paperId,
-                            url: paper.url
+                            url: paper.url,
                         };
                     });
-                    this.setState({favoritePapers: newFavoritePapers});
+                    this.setState({ favoritePapers: newFavoritePapers });
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error);
                 });
             }
@@ -126,42 +122,45 @@ class App extends React.Component {
     }
 
     setProgress(status) {
-        this.setState({progress: status});
+        this.setState({ progress: status });
     }
 
     refresh() {
-        this.setState({toBePushed: "/"});
+        this.setState({ toBePushed: "/" });
     }
 
     setSnackbarMsg(msg, variant) {
         this.setState({
             snackbarOpen: true,
             snackbarMessage: msg,
-            snackbarVariant: variant
+            snackbarVariant: variant,
         });
     }
 
     closeSnackbar() {
-        this.setState({snackbarOpen: false});
+        this.setState({ snackbarOpen: false });
     }
 
     render() {
-        var appBar = (
-            <AppBar style={{position: "fixed"}}>
+        const appBar = (
+            <AppBar style={{ position: "fixed" }}>
                 <Toolbar>
-                    <Typography variant="title" color="inherit" style={{flex: 1}}>
-                        <ButtonBase onClick={this.refresh} style={{fontSize: 20, textTransform: "none"}} color="inherit">
+                    <Typography variant="title" color="inherit" style={{ flex: 1 }}>
+                        <Button onClick={this.refresh} style={{ fontSize: 20, textTransform: "none" }} color="inherit">
                             Paper Query
-                        </ButtonBase>
+                        </Button>
                     </Typography>
                     {this.state.progress && <CircularProgress color="inherit" size={30}/>}
-                    <UserMenu username={this.state.username} toggleDrawer={this.toggleDrawer(true)} 
-                    handleLogInOut={this.handleLogInOut}/>
+                    <UserMenu
+                        username={this.state.username}
+                        toggleDrawer={this.toggleDrawer(true)}
+                        handleLogInOut={this.handleLogInOut}
+                    />
                 </Toolbar>
             </AppBar>
         );
 
-        var main = (props) => (
+        const main = props => (
             <Main
                 {...props}
                 username={this.state.username}
@@ -176,9 +175,24 @@ class App extends React.Component {
             />
         );
 
-        var login = (props) => <Login {...props} updateUsername={this.updateUsername} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} setSnackbarMsg={this.setSnackbarMsg} />;
+        const login = props => (
+            <Login
+                {...props}
+                updateUsername={this.updateUsername}
+                toBePushed={this.state.toBePushed}
+                resetToBePushed={this.resetToBePushed}
+                setSnackbarMsg={this.setSnackbarMsg}
+            />
+        );
 
-        var signup = (props) => <SignUp {...props} toBePushed={this.state.toBePushed} resetToBePushed={this.resetToBePushed} setSnackbarMsg={this.setSnackbarMsg} />
+        const signup = props => (
+            <SignUp
+                {...props}
+                toBePushed={this.state.toBePushed}
+                resetToBePushed={this.resetToBePushed}
+                setSnackbarMsg={this.setSnackbarMsg}
+            />
+        );
 
         return (
             <div>

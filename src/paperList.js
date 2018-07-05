@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { List } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import PaperItem from './paperItem';
 
 const styles = theme => ({
@@ -11,44 +15,77 @@ const styles = theme => ({
     },
 });
 
-class PaperList extends React.Component {
-    constructor(props) {
-        super(props);
+function PaperListWithoutStyles(props) {
+    const { list, onlyInfluential, favoritePapers, handleChooseTitle, handleToggleChecked, openURL, username, classes } = props;
+    let papers = [...list];
+    if (papers.length === 0) {
+        return null;
     }
-
-    render() {
-        var papers = [...this.props.list];
-        if (papers.length === 0) {
-            return null;
-        }
-        if (this.props.onlyInfluential) {
-            papers = papers.filter(paper => paper.isInfluential);
-        }
-        papers = papers.map(paper => (
-            <PaperItem
-                title={paper.title}
-                paperId={paper.paperId}
-                url={paper.url}
-                key={paper.paperId}
-                info={paper.info}
-                checked={this.props.favoritePapers[paper.title] !== undefined}
-                isInfluential={paper.isInfluential}
-                handleChooseTitle={this.props.handleChooseTitle}
-                handleToggleChecked={this.props.handleToggleChecked}
-                openURL={this.props.openURL}
-                username={this.props.username}
-            />
-        ));
-        return (
-            <div className={this.props.classes.root}>
-                {papers}
-            </div>
-        );
+    if (onlyInfluential) {
+        papers = papers.filter(paper => paper.isInfluential);
     }
+    papers = papers.map(paper => (
+        <PaperItem
+            title={paper.title}
+            paperId={paper.paperId}
+            url={paper.url}
+            key={paper.paperId}
+            info={paper.info}
+            checked={favoritePapers[paper.title] !== undefined}
+            isInfluential={paper.isInfluential}
+            handleChooseTitle={handleChooseTitle}
+            handleToggleChecked={handleToggleChecked}
+            openURL={openURL}
+            username={username}
+        />
+    ));
+    return (
+        <div className={classes.root}>
+            {papers}
+        </div>
+    );
 }
 
-PaperList.propTypes = {
+PaperListWithoutStyles.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(PaperList);
+const PaperList = withStyles(styles)(PaperListWithoutStyles);
+
+function DetailedPaperList(props) {
+    const { list, title, onlyInfluential, updateOnlyInfluential, maxShown, handleChooseTitle, handleToggleChecked, favoritePapers, openURL, username } = props;
+    return list.length === 0 ? null : (
+        <Grid item xs={12} sm={6}>
+            <Paper>
+                <Grid container justify="center" style={{ paddingTop: 20 }}>
+                    <Typography variant="headline">
+                        {`${title} (${list.length})`}
+                    </Typography>
+                </Grid>
+                <Grid container justify="flex-end">
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={onlyInfluential}
+                                onChange={updateOnlyInfluential}
+                                color="primary"
+                            />
+                        }
+                        label="Only influential"
+                    />
+                </Grid>
+                <PaperList
+                    list={list.slice(0, maxShown)}
+                    handleChooseTitle={handleChooseTitle}
+                    onlyInfluential={onlyInfluential}
+                    handleToggleChecked={handleToggleChecked}
+                    favoritePapers={favoritePapers}
+                    openURL={openURL}
+                    username={username}
+                />
+            </Paper>
+        </Grid>
+    );
+}
+
+export { PaperList, DetailedPaperList };

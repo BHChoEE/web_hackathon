@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Input, Button, Grid, Icon, withStyles, IconButton } from '@material-ui/core';
+import { Input, Button, Grid, Icon, withStyles } from '@material-ui/core';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -29,13 +29,8 @@ class UserInput extends React.Component {
         this.props.updateQuery(e.target.value);
     }
 
-    // searchGoogle = e => {
-    //     var url = "http://www.google.com/search?q=" + this.props.query;
-    //     window.open(url, "_blank");
-    // }
-
     handleKeyPress(e) {
-        if(e.key == "Enter") {
+        if (e.key === "Enter") {
             this.props.sendQuery();
         }
     }
@@ -44,13 +39,26 @@ class UserInput extends React.Component {
         const { classes } = this.props;
         return (
             <Grid container>
-                <Input id="#userInput" placeholder="Search for some papers ..." className={classes.input} value={this.props.query}
-                onChange={this.handleInput} onKeyPress={this.handleKeyPress} inputProps={{"aria-label": "Description"}} autoFocus style={{flex: 1}}/>
+                <Input
+                    id="#userInput"
+                    placeholder="Search for some papers ..."
+                    className={classes.input}
+                    value={this.props.query}
+                    onChange={this.handleInput}
+                    onKeyPress={this.handleKeyPress}
+                    inputProps={{ "aria-label": "Description" }}
+                    autoFocus
+                    style={{ flex: 1 }}
+                />
                 <Button className={classes.button} variant="outlined" onClick={this.props.sendQuery} color="primary" disabled={this.props.query.length === 0}>
                     Search
                     <Icon className={classes.rightIcon}>send</Icon>
                 </Button>
-                <RadioGroup row value={this.props.displayMode} onChange={this.props.handleModeChange}>
+                <RadioGroup
+                    row
+                    value={this.props.displayMode}
+                    onChange={this.props.handleModeChange}
+                >
                     <FormControlLabel
                         value="List"
                         control={<Radio />}
@@ -70,5 +78,5 @@ class UserInput extends React.Component {
 UserInput.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-  
+
 export default withStyles(styles)(UserInput);

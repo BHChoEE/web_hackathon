@@ -17,22 +17,21 @@ class Login extends React.Component {
             passwordError: false,
         };
         document.title = "Log In";
-        var retrievedObject = sessionStorage.getItem('userInfo');
+        const retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
-            var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
     }
 
     componentDidUpdate() {
-        var toBePushed = this.props.toBePushed;
+        const { toBePushed } = this.props;
         if (toBePushed !== "") {
             this.props.resetToBePushed();
             this.props.history.push(toBePushed);
         }
     }
 
-    handleChange = name => event => {
+    handleChange = name => (event) => {
         this.setState({
             [name]: event.target.value,
             usernameError: false,
@@ -40,41 +39,39 @@ class Login extends React.Component {
         });
     };
 
-    LogInPage = e => {
-        var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
+    LogInPage = () => {
+        const re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
         if (this.state.username.match(re) === null) {
             this.props.setSnackbarMsg("Username must contain only english letters and numbers!", "error");
             this.setState({
                 usernameError: true,
-                username: ""
+                username: "",
             });
             return;
         }
         axios.post("/user/login", {
             username: this.state.username,
             password: this.state.password,
-            updateTime: Date.now()
+            updateTime: Date.now(),
         })
-        .then(res => {
+        .then((res) => {
             if (res.data === 'User not found!') {
                 this.props.setSnackbarMsg(res.data, "error");
                 this.setState({
                     usernameError: true,
                     password: "",
-                    username: ""
+                    username: "",
                 });
-            }
-            else if (res.data === 'Password is wrong!') {
+            } else if (res.data === 'Password is wrong!') {
                 this.props.setSnackbarMsg(res.data, "error");
                 this.setState({
                     passwordError: true,
                     password: "",
                 });
-            }
-            else {
+            } else {
                 sessionStorage.clear();
-                var userInfo = {
-                    username: this.state.username 
+                const userInfo = {
+                    username: this.state.username,
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
                 this.props.setSnackbarMsg('Log in successfully!', "success");
@@ -82,34 +79,32 @@ class Login extends React.Component {
                 this.props.history.push('/');
             }
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
     };
 
-    SignUpPage = e => {
+    SignUpPage = () => {
         this.props.history.push('/signup');
     }
 
-    GuestLogIn = e => {
-        var userInfo  = {
-            username: "Guest"
+    GuestLogIn = () => {
+        const userInfo = {
+            username: "Guest",
         };
         sessionStorage.setItem('Guest', JSON.stringify(userInfo));
         this.props.history.push('/');
     }
 
-    handleKeyPress = e => {
-        if (e.key == "Enter") {
-            if (this.state.username == "") {
-                this.props.setSnackbarMsg("Username cannot be empty!", "error")
-                this.setState({usernameError: true});
-            }
-            else if (this.state.password == "") {
-                this.props.setSnackbarMsg("Password cannot be empty!", "error")
-                this.setState({passwordError: true});
-            }
-            else {
+    handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            if (this.state.username === "") {
+                this.props.setSnackbarMsg("Username cannot be empty!", "error");
+                this.setState({ usernameError: true });
+            } else if (this.state.password === "") {
+                this.props.setSnackbarMsg("Password cannot be empty!", "error");
+                this.setState({ passwordError: true });
+            } else {
                 this.LogInPage(e);
             }
         }
@@ -117,7 +112,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <Card open style={{marginTop: 80}}>
+            <Card open style={{ marginTop: 80 }}>
                 <CardHeader title="Log in" />
                 <CardContent>
                     <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
@@ -128,10 +123,10 @@ class Login extends React.Component {
                     value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
-                    <Button onClick={this.SignUpPage} color="secondary" style={{textTransform: "none"}}>
+                    <Button onClick={this.SignUpPage} color="secondary" style={{ textTransform: "none" }}>
                         Sign up
                     </Button>
-                    <Button variant="raised" onClick={this.LogInPage} color="primary" style={{textTransform: "none"}}>
+                    <Button variant="raised" onClick={this.LogInPage} color="primary" style={{ textTransform: "none" }}>
                         Log in
                     </Button>
                 </CardActions>

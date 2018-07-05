@@ -1,16 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import UserInput from './userInput';
-import PaperList from './paperList';
-import DetailedPaperList from './detailedPaperList';
-import { FavoriteCheckbox, ActionButtons } from './actionButtons';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-const JSSoup = require('jssoup').default;
-import PaperGraph from './paperGraph';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -21,6 +15,12 @@ import Menu from '@material-ui/core/Menu';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import UserInput from './userInput';
+import { PaperList, DetailedPaperList } from './paperList';
+import { FavoriteCheckbox, ActionButtons } from './actionButtons';
+import PaperGraph from './paperGraph';
+
+const JSSoup = require('jssoup').default;
 
 const styles = {
     root: {
@@ -70,13 +70,12 @@ class Main extends React.Component {
     }
 
     componentDidUpdate() {
-        var toBePushed = this.props.toBePushed;
+        const { toBePushed } = this.props;
         if (toBePushed !== "") {
             this.props.resetToBePushed();
             if (toBePushed !== "/") {
                 this.props.history.push(toBePushed);
-            }
-            else {
+            } else {
                 this.setState({
                     query: "",
                     searchResultList: [],
@@ -92,92 +91,90 @@ class Main extends React.Component {
     }
 
     sendQuery() {
-        var query = this.state.query;
+        const { query } = this.state;
         if (query === "memes") {
-            this.setState({memesDialogOpen: true});
+            this.setState({ memesDialogOpen: true });
         }
         this.props.setProgress(true);
-        axios.get("https://export.arxiv.org/api/query?search_query=" + query)
-        .then(response => {
-            var soup = new JSSoup(response.data);
-            var entries = soup.findAll("entry");
-            var searchResultList = [];
-            entries.forEach(entry => {
-                var find = (str, tag) => tag.find(str).contents[0]._text;
-                // var authorList = entry.findAll("author").map(tag => find("name", tag));
-                var year = find("published", entry).substring(0, 4);
-                if (parseInt(year) >= 2008) {
-                    var title = find("title", entry);
-                    var paperId = find("id", entry).split("/abs/")[1].split("v")[0];
-                    var url = entry.find("link").attrs.href;
+        axios.get(`https://export.arxiv.org/api/query?search_query=${query}`)
+        .then((response) => {
+            const soup = new JSSoup(response.data);
+            const entries = soup.findAll("entry");
+            let searchResultList = [];
+            entries.forEach((entry) => {
+                const find = (str, tag) => tag.find(str).contents[0]._text;
+                const year = find("published", entry).substring(0, 4);
+                if (parseInt(year, 10) >= 2008) {
+                    const title = find("title", entry);
+                    const paperId = find("id", entry).split("/abs/")[1].split("v")[0];
+                    const url = entry.find("link").attrs.href;
                     searchResultList.push({
                         title: title.replace(/\s\s+/g, " "),
-                        paperId: "arXiv:" + paperId,
-                        url: url,
-                        info: year + " ArXiv",
+                        paperId: `arXiv:${paperId}`,
+                        url,
+                        info: `${year} ArXiv`,
                     });
                 }
             });
             this.setState({
-                searchResultList: searchResultList,
+                searchResultList,
                 referenceList: [],
                 citationList: [],
                 hasChosenTitle: false,
             });
             this.props.setProgress(false);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
     }
 
     updateQuery(query) {
-        this.setState({query: query});
+        this.setState({ query });
     }
 
-    updateOnlyInfluential = onlyInfluential => e => {
-        this.setState({[onlyInfluential]: e.target.checked});
+    updateOnlyInfluential = onlyInfluential => (e) => {
+        this.setState({ [onlyInfluential]: e.target.checked });
     }
 
     handleChooseTitle = paperId => () => {
-        var { historyList, selectedIndex } = this.state;
+        const { historyList, selectedIndex } = this.state;
         if (selectedIndex >= 0 && paperId === historyList[selectedIndex].paperId) {
             return;
         }
         this.props.setProgress(true);
-        axios.get("https://api.semanticscholar.org/v1/paper/" + paperId + "?include_unknown_references=false")
-        .then(response => {
-            var referenceList = [];
-            var citationList = [];
-            var makeList = (src, dst) => {
-                src.forEach(paper => {
-                    var info = [paper.year || "", paper.venue || ""].join(" ");
-                    var paperObj = {
+        axios.get(`https://api.semanticscholar.org/v1/paper/${paperId}?include_unknown_references=false`)
+        .then((response) => {
+            let referenceList = [];
+            let citationList = [];
+            const makeList = (src, dst) => {
+                src.forEach((paper) => {
+                    const info = [paper.year || "", paper.venue || ""].join(" ");
+                    const paperObj = {
                         title: paper.title,
                         paperId: paper.paperId,
                         url: paper.url,
                         isInfluential: paper.isInfluential,
-                        info: info,
+                        info,
                     };
                     if (paper.isInfluential) {
                         dst.unshift(paperObj);
-                    }
-                    else {
+                    } else {
                         dst.push(paperObj);
                     }
                 });
-            }
+            };
             makeList(response.data.references, referenceList);
             makeList(response.data.citations, citationList);
-            var newHistoryList = [...historyList];
-            var info = [response.data.year || "", response.data.venue || ""].join(" ")
-            var paper = {
+            let newHistoryList = [...historyList];
+            const info = [response.data.year || "", response.data.venue || ""].join(" ");
+            const paper = {
                 title: response.data.title.replace(/\s\s+/g, " "),
-                paperId: paperId,
+                paperId,
                 url: response.data.url,
-                info: info,
+                info,
             };
-            var newSelectedIndex = -1;
+            let newSelectedIndex = -1;
             for (let i = 0; i < newHistoryList.length; i++) {
                 if (newHistoryList[i].paperId === paperId) {
                     newSelectedIndex = i;
@@ -189,53 +186,53 @@ class Main extends React.Component {
                 newSelectedIndex = newHistoryList.length - 1;
             }
             this.setState({
-                referenceList: referenceList,
-                citationList: citationList,
+                referenceList,
+                citationList,
                 historyList: newHistoryList,
                 hasChosenTitle: true,
                 selectedIndex: newSelectedIndex,
             });
             this.props.setProgress(false);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
     }
 
-    handleModeChange = event => {
-        this.setState({displayMode: event.target.value});
+    handleModeChange = (event) => {
+        this.setState({ displayMode: event.target.value });
     }
 
     handleChooseFavorite = paperId => () => {
         this.props.toggleDrawer(false)();
         this.setState(
-            {searchResultList: []},
-            this.handleChooseTitle(paperId)
+            { searchResultList: [] },
+            this.handleChooseTitle(paperId),
         );
     }
 
     handleMaxShownChange(event) {
-        var maxCitRefShown = Math.max(event.target.value, 1);
-        this.setState({maxCitRefShown: maxCitRefShown});
+        const maxCitRefShown = Math.max(event.target.value, 1);
+        this.setState({ maxCitRefShown });
     }
 
     handleListItemClick(event) {
-        this.setState({anchorEl: event.currentTarget});
-    };
+        this.setState({ anchorEl: event.currentTarget });
+    }
 
     handleMenuItemClick = index => () => {
         this.setState(
-            {anchorEl: null},
-            this.handleChooseTitle(this.state.historyList[index].paperId)
+            { anchorEl: null },
+            this.handleChooseTitle(this.state.historyList[index].paperId),
         );
     };
 
     handleMenuClose() {
-        this.setState({anchorEl: null});
-    };
+        this.setState({ anchorEl: null });
+    }
 
     closeMemesDialog = () => {
-        this.setState({memesDialogOpen: false});
+        this.setState({ memesDialogOpen: false });
     };
 
     openURL = url => () => {
@@ -244,14 +241,14 @@ class Main extends React.Component {
 
     render() {
         const { classes, favoritePapers, handleToggleChecked } = this.props;
-        var { displayMode, historyList, selectedIndex, anchorEl, hasChosenTitle, maxCitRefShown } = this.state;
-        var currentPaper = historyList[selectedIndex];
+        const { displayMode, historyList, selectedIndex, anchorEl, hasChosenTitle, maxCitRefShown } = this.state;
+        const currentPaper = historyList[selectedIndex];
 
-        var favoritePaperListItems = Object.keys(favoritePapers).map(title => {
-            var { paperId, url } = favoritePapers[title];
+        const favoritePaperListItems = Object.keys(favoritePapers).map((title) => {
+            const { paperId, url } = favoritePapers[title];
             return (
                 <ListItem key={title}>
-                    <ListItemText primary={title} style={{flex: 1}} />
+                    <ListItemText primary={title} style={{ flex: 1 }} />
                     <ActionButtons
                         title={title}
                         paperId={paperId}
@@ -266,22 +263,22 @@ class Main extends React.Component {
             );
         });
 
-        var drawer = (
+        const drawer = (
             <Drawer open={this.props.drawerOpen} onClose={this.props.toggleDrawer(false)}>
                 <Typography
                     variant="display1"
                     color="inherit"
-                    style={{textAlign: "center", marginTop: 20}}
+                    style={{ textAlign: "center", marginTop: 20 }}
                 >
                     Favorite Papers
                 </Typography>
-                <List>
+                <List style={{ width: 600 }}>
                     {favoritePaperListItems}
                 </List>
             </Drawer>
         );
 
-        var memesDialog = (
+        const memesDialog = (
             <Dialog
                 open={this.state.memesDialogOpen}
                 onClose={this.closeMemesDialog}
@@ -291,14 +288,14 @@ class Main extends React.Component {
                     <img src="./assets/memes.jpg" />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.closeMemesDialog} color="primary" style={{textTransform: "none"}}>
+                    <Button onClick={this.closeMemesDialog} color="primary" style={{ textTransform: "none" }}>
                         "原來是memes的部分啊... OK OK"
                     </Button>
                 </DialogActions>
             </Dialog>
         );
 
-        var userInput = (
+        const userInput = (
             <UserInput
                 sendQuery={this.sendQuery}
                 query={this.state.query}
@@ -308,13 +305,17 @@ class Main extends React.Component {
             />
         );
 
-        var historyListMenuItems = historyList.map((paper, index) => (
-            <MenuItem key={paper.paperId} selected={index === selectedIndex} onClick={this.handleMenuItemClick(index)}>
+        const historyListMenuItems = historyList.map((paper, index) => (
+            <MenuItem
+                key={paper.paperId}
+                selected={index === selectedIndex}
+                onClick={this.handleMenuItemClick(index)}
+            >
                 {paper.title}
             </MenuItem>
         ));
 
-        var history = historyList.length === 0 ? null : (
+        const history = historyList.length === 0 ? null : (
             <Grid container alignItems="center" justify="center">
                 <Typography variant="display1">
                     View history
@@ -338,7 +339,7 @@ class Main extends React.Component {
             </Grid>
         );
 
-        var searchResultList = hasChosenTitle ? null : (
+        const searchResultList = hasChosenTitle ? null : (
             <PaperList
                 list={this.state.searchResultList}
                 handleChooseTitle={this.handleChooseTitle}
@@ -349,7 +350,7 @@ class Main extends React.Component {
             />
         );
 
-        var graph = hasChosenTitle && displayMode === "Graph" ? (
+        const graph = hasChosenTitle && displayMode === "Graph" ? (
             <PaperGraph
                 currentPaper={currentPaper}
                 referenceList={this.state.referenceList}
@@ -358,7 +359,7 @@ class Main extends React.Component {
             />
         ) : null;
 
-        var referenceList = displayMode === "List" ? (
+        const referenceList = displayMode === "List" ? (
             <DetailedPaperList
                 title="References"
                 onlyInfluential={this.state.onlyInfluentialRefs}
@@ -373,7 +374,7 @@ class Main extends React.Component {
             />
         ) : null;
 
-        var citationList = displayMode === "List" ? (
+        const citationList = displayMode === "List" ? (
             <DetailedPaperList
                 title="Citations"
                 onlyInfluential={this.state.onlyInfluentialCits}
@@ -392,7 +393,7 @@ class Main extends React.Component {
             <div className={classes.root}>
                 {drawer}
                 {memesDialog}
-                <Grid container style={{marginTop: 80}}>
+                <Grid container style={{ marginTop: 80 }}>
                     {userInput}
                     {history}
                     {searchResultList}
@@ -403,11 +404,11 @@ class Main extends React.Component {
                             value={maxCitRefShown}
                             onChange={this.handleMaxShownChange}
                             type="number"
-                            InputLabelProps={{shrink: true}}
+                            InputLabelProps={{ shrink: true }}
                             margin="normal"
                         />
                     }
-                    <Grid container spacing={16} style={{marginTop: 12}}>
+                    <Grid container spacing={16} style={{ marginTop: 12 }}>
                         {citationList}
                         {referenceList}
                     </Grid>

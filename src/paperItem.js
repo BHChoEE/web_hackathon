@@ -11,26 +11,22 @@ class PaperItem extends React.Component {
         this.state = {
             authors: [],
         };
+
+        this.handleMore = this.handleMore.bind(this);
     }
-    handleMore = e => {
-        if(this.state.authors.length!=0){
+
+    handleMore() {
+        if (this.state.authors.length !== 0) {
             return;
         }
-        axios.get("https://api.semanticscholar.org/v1/paper/" + this.props.paperId + "?include_unknown_references=false")
-        .then(res => {
-            var authors = []
-            var searchHelper = (src, dst) => {
-                src.forEach(author => {
-                    var authorName = author.name;
-                    dst.push(authorName);
-                });
-            };
-            searchHelper(res.data.authors, authors);
-            this.setState({authors: authors});
+        axios.get(`https://api.semanticscholar.org/v1/paper/${this.props.paperId}?include_unknown_references=false`)
+        .then((res) => {
+            const authors = res.data.authors.map(author => author.name);
+            this.setState({ authors });
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
-        })
+        });
     }
 
     render() {
@@ -43,11 +39,10 @@ class PaperItem extends React.Component {
                             <StarIcon />
                         </ListItemIcon>
                     }
-                    {/* props.info may vary */}
                     <ListItemText inset primary={this.props.title} secondary={this.props.info} />
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                    <p style={{flex: 1}}>{"Authors: " + this.state.authors.join(", ")}</p>
+                    <p style={{ flex: 1 }}>{`Authors: ${this.state.authors.join(", ")}`}</p>
                     <ActionButtons
                         title={this.props.title}
                         paperId={this.props.paperId}

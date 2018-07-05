@@ -1,6 +1,6 @@
 const FavoriteSchema = require('./Favorite.js');
 
-var Favorite = null;
+let Favorite = null;
 
 class FavoriteSocket {
     constructor(con) {
@@ -8,20 +8,20 @@ class FavoriteSocket {
     }
 
     addFavorite(data, res) {
-        var favorite = {
+        const favorite = {
             title: data.title,
             paperId: data.paperId,
             url: data.url,
-            username: data.username
+            username: data.username,
         };
-        var query = {
+        const query = {
             paperId: data.paperId,
-            username: data.username
+            username: data.username,
         };
-        var options = {
+        const options = {
             upsert: true,
             new: true,
-            setDefaultOnInsert: true
+            setDefaultOnInsert: true,
         };
         Favorite.findOneAndUpdate(query, favorite, options, (error, result) => {
             if (error) {
@@ -29,39 +29,33 @@ class FavoriteSocket {
                 res.send(error);
                 return;
             }
-            else {
-                res.send(result);
-            }
+            res.send(result);
         });
-    };
+    }
 
     removeFavorite(data, res) {
-        const query = {paperId: data.paperId, username: data.username};
+        const query = { paperId: data.paperId, username: data.username };
         Favorite.findOneAndRemove(query, (error, result) => {
             if (error) {
                 console.log(error);
                 res.send(error);
                 return;
             }
-            else {
-                console.log(result);
-                res.send(result);
-            }
+            console.log(result);
+            res.send(result);
         });
-    };
+    }
 
     loadFavoriteList(username, res) {
-        Favorite.find({username: username}, (error, favorites) => {
+        Favorite.find({ username }, (error, favorites) => {
             if (error) {
                 console.log(error);
                 res.send(error);
                 return;
             }
-            else {
-                res.send(favorites);
-            }
+            res.send(favorites);
         });
-    };
+    }
 }
 
 module.exports = FavoriteSocket;

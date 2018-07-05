@@ -16,12 +16,12 @@ class UserMenu extends React.Component {
     }
 
     handleClick(event) {
-        this.setState({anchorEl: event.currentTarget});
-    };
+        this.setState({ anchorEl: event.currentTarget });
+    }
 
     handleClose() {
-        this.setState({anchorEl: null});
-    };
+        this.setState({ anchorEl: null });
+    }
 
     handleMenuItemClick = callback => () => {
         this.handleClose();
@@ -29,8 +29,8 @@ class UserMenu extends React.Component {
     }
 
     render() {
-        var anchorEl = this.state.anchorEl;
-        var username = this.props.username;
+        const { anchorEl } = this.state;
+        const { username } = this.props;
 
         return (
             <div>
@@ -38,7 +38,7 @@ class UserMenu extends React.Component {
                     aria-haspopup="true"
                     onClick={this.handleClick}
                     color="inherit"
-                    style={{textTransform: "none"}}
+                    style={{ textTransform: "none" }}
                 >
                     {username}
                 </Button>

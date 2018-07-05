@@ -17,22 +17,21 @@ class SignUp extends React.Component {
             passwordError: false,
         };
         document.title = "Sign Up";
-        var retrievedObject = sessionStorage.getItem('userInfo');
+        const retrievedObject = sessionStorage.getItem('userInfo');
         if (retrievedObject != null) {
-            var username = JSON.parse(retrievedObject)['username'];
             this.props.history.push('/');
         }
     }
 
     componentDidUpdate() {
-        var toBePushed = this.props.toBePushed;
+        const { toBePushed } = this.props;
         if (toBePushed !== "") {
             this.props.resetToBePushed();
             this.props.history.push(toBePushed);
         }
     }
 
-    handleChange = name => event => {
+    handleChange = name => (event) => {
         this.setState({
             [name]: event.target.value,
             usernameError: false,
@@ -40,56 +39,52 @@ class SignUp extends React.Component {
         });
     };
 
-    SignUpPage = e => {
-        var re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
-        if (this.state.username.match(re) === null){
+    SignUpPage = () => {
+        const re = RegExp('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$');
+        if (this.state.username.match(re) === null) {
             this.props.setSnackbarMsg("Username must contain only english letters and numbers!", "error");
             this.setState({
                 usernameError: true,
-                username: ""
+                username: "",
             });
             return;
         }
         axios.post('/user/signup', {
             username: this.state.username,
             password: this.state.password,
-            updateTime: Date()
+            updateTime: Date(),
         })
-        .then(res => {
+        .then((res) => {
             console.log(res.data);
             if (res.data._message == null) {
-                var username = res.data.username;
                 this.props.setSnackbarMsg('Sign Up successfully!', "success");
                 this.LogInPage();
-            }
-            else {
-                this.props.setSnackbarMsg(res.data._message + ': Already used or invalid.', "error");
+            } else {
+                this.props.setSnackbarMsg(`${res.data._message}: Already used or invalid.`, "error");
                 this.setState({
                     usernameError: true,
                     username: "",
                 });
             }
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
     };
 
-    LogInPage = e => {
+    LogInPage = () => {
         this.props.history.push('/login');
     }
 
-    handleKeyPress = e => {
-        if (e.key == "Enter") {
-            if (this.state.username == "") {
-                this.props.setSnackbarMsg("Username cannot be empty!", "error")
-                this.setState({usernameError: true});
-            }
-            else if (this.state.password == "") {
-                this.props.setSnackbarMsg("Password cannot be empty!", "error")
-                this.setState({passwordError: true});
-            }
-            else {
+    handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            if (this.state.username === "") {
+                this.props.setSnackbarMsg("Username cannot be empty!", "error");
+                this.setState({ usernameError: true });
+            } else if (this.state.password === "") {
+                this.props.setSnackbarMsg("Password cannot be empty!", "error");
+                this.setState({ passwordError: true });
+            } else {
                 this.SignUpPage(e);
             }
         }
@@ -97,7 +92,7 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <Card open style={{marginTop: 80}}>
+            <Card open style={{ marginTop: 80 }}>
                 <CardHeader title="Sign up" />
                 <CardContent>
                     <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
@@ -108,10 +103,10 @@ class SignUp extends React.Component {
                     value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
-                    <Button onClick={this.LogInPage} color="secondary" style={{textTransform: "none"}}>
+                    <Button onClick={this.LogInPage} color="secondary" style={{ textTransform: "none" }}>
                         Log in
                     </Button>
-                    <Button variant="raised" onClick={this.SignUpPage} color="primary" style={{textTransform: "none"}}>
+                    <Button variant="raised" onClick={this.SignUpPage} color="primary" style={{ textTransform: "none" }}>
                         Sign up
                     </Button>
                 </CardActions>

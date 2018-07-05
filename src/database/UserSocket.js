@@ -1,62 +1,54 @@
-const UserSchema = require('./User.js');
-const mongoose = require('mongoose');
 const crypto = require('crypto');
+const UserSchema = require('./User.js');
 
-var User = null;
+function encrypt(password) {
+    const hash = crypto.createHash('sha256');
+    hash.update(password);
+    return hash.digest('hex');
+}
+
+let User = null;
 
 class UserSocket {
     constructor(con) {
         User = con.model('User', UserSchema);
     }
 
-    encrypt(password) {
-        var hash = crypto.createHash('sha256');
-        hash.update(password);
-        return hash.digest('hex');
-    }
-
     storeUser(data, res) {
-        var newUser = new User({
+        const newUser = new User({
             username: data.username,
-            password: this.encrypt(data.password),
-            updateTime: data.updateTime
+            password: encrypt(data.password),
+            updateTime: data.updateTime,
         });
-        newUser.save((error, data) => {
+        newUser.save((error, data_) => {
             if (error) {
                 console.log(error);
                 res.send(error);
-            }
-            else {
-                console.log(data);
+            } else {
+                console.log(data_);
                 res.send(data);
             }
         });
-    };
+    }
 
     checkUser(data, res) {
-        User.find({'username': data.username}, (error, users) => {
+        User.find({ username: data.username }, (error, users) => {
             if (error) {
                 console.log(error);
                 res.send(error);
-            }
-            else if (users.length == 1) {
-                var user = users[0];
-                console.log(user);
-                console.log(user.password)
-                console.log(this.encrypt(data.password))
-                if (user.password !== this.encrypt(data.password)) {
+            } else if (users.length === 1) {
+                const user = users[0];
+                if (user.password !== encrypt(data.password)) {
                     res.send('Password is wrong!');
-                }
-                else {
+                } else {
                     res.send('redirect');
                 }
-            }
-            else {
+            } else {
                 console.log('User not found!');
                 res.send('User not found!');
             }
         });
-    };
+    }
 }
 
 module.exports = UserSocket;
