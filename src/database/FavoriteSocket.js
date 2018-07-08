@@ -1,10 +1,8 @@
-const FavoriteSchema = require('./Favorite.js');
-
-let Favorite = null;
+const FavoriteSchema = require('./Favorite');
 
 class FavoriteSocket {
     constructor(con) {
-        Favorite = con.model('Favorite', FavoriteSchema);
+        this.Favorite = con.model('Favorite', FavoriteSchema);
     }
 
     addFavorite(data, res) {
@@ -23,7 +21,7 @@ class FavoriteSocket {
             new: true,
             setDefaultOnInsert: true,
         };
-        Favorite.findOneAndUpdate(query, favorite, options, (error, result) => {
+        this.Favorite.findOneAndUpdate(query, favorite, options, (error, result) => {
             if (error) {
                 console.log(error);
                 res.send(error);
@@ -35,19 +33,18 @@ class FavoriteSocket {
 
     removeFavorite(data, res) {
         const query = { paperId: data.paperId, username: data.username };
-        Favorite.findOneAndRemove(query, (error, result) => {
+        this.Favorite.findOneAndRemove(query, (error, result) => {
             if (error) {
                 console.log(error);
                 res.send(error);
                 return;
             }
-            console.log(result);
             res.send(result);
         });
     }
 
     loadFavoriteList(username, res) {
-        Favorite.find({ username }, (error, favorites) => {
+        this.Favorite.find({ username }, (error, favorites) => {
             if (error) {
                 console.log(error);
                 res.send(error);

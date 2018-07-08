@@ -1,6 +1,6 @@
+import Graph from 'react-graph-vis';
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import Graph from 'react-graph-vis';
 import Slider from '@material-ui/lab/Slider';
 import FormLabel from '@material-ui/core/FormLabel';
 

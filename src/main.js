@@ -1,5 +1,5 @@
-import React from 'react';
 import axios from 'axios';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -96,8 +96,7 @@ class Main extends React.Component {
             this.setState({ memesDialogOpen: true });
         }
         this.props.setProgress(true);
-        axios.get(`https://export.arxiv.org/api/query?search_query=${query}`)
-        .then((response) => {
+        axios.get(`https://export.arxiv.org/api/query?search_query=${query}`).then((response) => {
             const soup = new JSSoup(response.data);
             const entries = soup.findAll("entry");
             let searchResultList = [];
@@ -123,8 +122,7 @@ class Main extends React.Component {
                 hasChosenTitle: false,
             });
             this.props.setProgress(false);
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     }
@@ -143,8 +141,7 @@ class Main extends React.Component {
             return;
         }
         this.props.setProgress(true);
-        axios.get(`https://api.semanticscholar.org/v1/paper/${paperId}?include_unknown_references=false`)
-        .then((response) => {
+        axios.get(`https://api.semanticscholar.org/v1/paper/${paperId}?include_unknown_references=false`).then((response) => {
             let referenceList = [];
             let citationList = [];
             const makeList = (src, dst) => {
@@ -193,8 +190,7 @@ class Main extends React.Component {
                 selectedIndex: newSelectedIndex,
             });
             this.props.setProgress(false);
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     }
@@ -289,7 +285,7 @@ class Main extends React.Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.closeMemesDialog} color="primary" style={{ textTransform: "none" }}>
-                        "原來是memes的部分啊... OK OK"
+                        原來是memes的部分啊... OK OK
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -1,6 +1,6 @@
+import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -84,11 +84,9 @@ class App extends React.Component {
             paperId,
             url,
             username: this.state.username,
-        })
-        .then((res) => {
+        }).then(() => {
             this.setState({ favoritePapers: newFavoritePapers });
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     }
@@ -103,8 +101,7 @@ class App extends React.Component {
             if (this.state.username !== "Guest") {
                 axios.post('/favorite/all', {
                     username: this.state.username,
-                })
-                .then((res) => {
+                }).then((res) => {
                     let newFavoritePapers = {};
                     res.data.forEach((paper) => {
                         newFavoritePapers[paper.title] = {
@@ -113,8 +110,7 @@ class App extends React.Component {
                         };
                     });
                     this.setState({ favoritePapers: newFavoritePapers });
-                })
-                .catch((error) => {
+                }).catch((error) => {
                     console.log(error);
                 });
             }

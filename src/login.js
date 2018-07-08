@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -5,7 +6,6 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
-import axios from 'axios';
 
 class Login extends React.Component {
     constructor(props) {
@@ -34,8 +34,7 @@ class Login extends React.Component {
     handleChange = name => (event) => {
         this.setState({
             [name]: event.target.value,
-            usernameError: false,
-            passwordError: false,
+            [`${name}Error`]: false,
         });
     };
 
@@ -53,8 +52,7 @@ class Login extends React.Component {
             username: this.state.username,
             password: this.state.password,
             updateTime: Date.now(),
-        })
-        .then((res) => {
+        }).then((res) => {
             if (res.data === 'User not found!') {
                 this.props.setSnackbarMsg(res.data, "error");
                 this.setState({
@@ -68,32 +66,25 @@ class Login extends React.Component {
                     passwordError: true,
                     password: "",
                 });
-            } else {
+            } else if (res.data === 'Log in successfully!') {
                 sessionStorage.clear();
                 const userInfo = {
                     username: this.state.username,
                 };
                 sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-                this.props.setSnackbarMsg('Log in successfully!', "success");
+                this.props.setSnackbarMsg(res.data, "success");
                 this.props.updateUsername(this.state.username);
                 this.props.history.push('/');
+            } else {
+                this.props.setSnackbarMsg(res.data, "error");
             }
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     };
 
     SignUpPage = () => {
         this.props.history.push('/signup');
-    }
-
-    GuestLogIn = () => {
-        const userInfo = {
-            username: "Guest",
-        };
-        sessionStorage.setItem('Guest', JSON.stringify(userInfo));
-        this.props.history.push('/');
     }
 
     handleKeyPress = (e) => {
@@ -116,11 +107,11 @@ class Login extends React.Component {
                 <CardHeader title="Log in" />
                 <CardContent>
                     <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
-                    value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
+                        value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardContent>
                     <TextField error={this.state.passwordError} margin="dense" id="password" label="Password" type="password"
-                    value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
+                        value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
                     <Button onClick={this.SignUpPage} color="secondary" style={{ textTransform: "none" }}>

@@ -1,21 +1,19 @@
 const crypto = require('crypto');
-const UserSchema = require('./User.js');
+const UserSchema = require('./User');
 
-function encrypt(password) {
+function encrypt(plaintext) {
     const hash = crypto.createHash('sha256');
-    hash.update(password);
+    hash.update(plaintext);
     return hash.digest('hex');
 }
 
-let User = null;
-
 class UserSocket {
     constructor(con) {
-        User = con.model('User', UserSchema);
+        this.User = con.model('User', UserSchema);
     }
 
     storeUser(data, res) {
-        const newUser = new User({
+        const newUser = new this.User({
             username: data.username,
             password: encrypt(data.password),
             updateTime: data.updateTime,
@@ -25,27 +23,22 @@ class UserSocket {
                 console.log(error);
                 res.send(error);
             } else {
-                console.log(data_);
                 res.send(data);
             }
         });
     }
 
     checkUser(data, res) {
-        User.find({ username: data.username }, (error, users) => {
+        this.User.find({ username: data.username }, (error, users) => {
             if (error) {
                 console.log(error);
                 res.send(error);
-            } else if (users.length === 1) {
-                const user = users[0];
-                if (user.password !== encrypt(data.password)) {
-                    res.send('Password is wrong!');
-                } else {
-                    res.send('redirect');
-                }
-            } else {
-                console.log('User not found!');
+            } else if (users.length === 0) {
                 res.send('User not found!');
+            } else if (users[0].password !== encrypt(data.password)) {
+                res.send('Password is wrong!');
+            } else {
+                res.send('Log in successfully!');
             }
         });
     }

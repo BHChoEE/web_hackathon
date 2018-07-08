@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -5,7 +6,6 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
-import axios from 'axios';
 
 class SignUp extends React.Component {
     constructor(props) {
@@ -34,8 +34,7 @@ class SignUp extends React.Component {
     handleChange = name => (event) => {
         this.setState({
             [name]: event.target.value,
-            usernameError: false,
-            passwordError: false,
+            [`${name}Error`]: false,
         });
     };
 
@@ -53,9 +52,7 @@ class SignUp extends React.Component {
             username: this.state.username,
             password: this.state.password,
             updateTime: Date(),
-        })
-        .then((res) => {
-            console.log(res.data);
+        }).then((res) => {
             if (res.data._message == null) {
                 this.props.setSnackbarMsg('Sign Up successfully!', "success");
                 this.LogInPage();
@@ -66,8 +63,7 @@ class SignUp extends React.Component {
                     username: "",
                 });
             }
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     };
@@ -96,11 +92,11 @@ class SignUp extends React.Component {
                 <CardHeader title="Sign up" />
                 <CardContent>
                     <TextField error={this.state.usernameError} margin="dense" id="username" label="Username" type="username" autoFocus
-                    value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
+                        value={this.state.username} onChange={this.handleChange('username')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardContent>
                     <TextField error={this.state.passwordError} margin="dense" id="password" label="Password" type="password"
-                    value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
+                        value={this.state.password} onChange={this.handleChange('password')} onKeyPress={this.handleKeyPress} fullWidth />
                 </CardContent>
                 <CardActions>
                     <Button onClick={this.LogInPage} color="secondary" style={{ textTransform: "none" }}>

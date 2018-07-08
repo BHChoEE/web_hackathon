@@ -1,8 +1,12 @@
+import axios from 'axios';
 import React from 'react';
-import { ListItemText, ListItemIcon, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import StarIcon from '@material-ui/icons/Star';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import axios from 'axios';
 import { ActionButtons } from './actionButtons';
 
 class PaperItem extends React.Component {
@@ -19,12 +23,10 @@ class PaperItem extends React.Component {
         if (this.state.authors.length !== 0) {
             return;
         }
-        axios.get(`https://api.semanticscholar.org/v1/paper/${this.props.paperId}?include_unknown_references=false`)
-        .then((res) => {
+        axios.get(`https://api.semanticscholar.org/v1/paper/${this.props.paperId}?include_unknown_references=false`).then((res) => {
             const authors = res.data.authors.map(author => author.name);
             this.setState({ authors });
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error);
         });
     }
