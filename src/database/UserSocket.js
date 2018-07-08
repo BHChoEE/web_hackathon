@@ -18,12 +18,12 @@ class UserSocket {
             password: encrypt(data.password),
             updateTime: data.updateTime,
         });
-        newUser.save((error, data_) => {
+        newUser.save((error, saved) => {
             if (error) {
                 console.log(error);
                 res.send(error);
             } else {
-                res.send(data);
+                res.send(saved);
             }
         });
     }
