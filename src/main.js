@@ -250,7 +250,6 @@ class Main extends React.Component {
                         paperId={paperId}
                         url={url}
                         checked={true}
-                        username={this.props.username}
                         openURL={this.openURL}
                         handleChoose={this.handleChooseFavorite}
                         handleToggleChecked={handleToggleChecked}
@@ -329,7 +328,6 @@ class Main extends React.Component {
                     paperId={currentPaper.paperId}
                     url={currentPaper.url}
                     checked={Object.keys(favoritePapers).includes(currentPaper.title)}
-                    username={this.props.username}
                     handleToggleChecked={this.props.handleToggleChecked}
                 />
             </Grid>

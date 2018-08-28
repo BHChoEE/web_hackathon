@@ -7,10 +7,7 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import Tooltip from '@material-ui/core/Tooltip';
 
 function FavoriteCheckbox(props) {
-    const { title, paperId, url, checked, handleToggleChecked, username } = props;
-    if (username === "Guest") {
-        return null;
-    }
+    const { title, paperId, url, checked, handleToggleChecked } = props;
     const tooltipTitle = `${checked ? "Remove from" : "Add to"} favorite`;
     return (
         <Tooltip title={tooltipTitle} placement="top">
@@ -24,7 +21,7 @@ function FavoriteCheckbox(props) {
 }
 
 function ActionButtons(props) {
-    const { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked, username } = props;
+    const { title, paperId, url, checked, openURL, handleChoose, handleToggleChecked } = props;
     const iconSrc = `./assets/${url.includes("arxiv") ? "arxiv.ico" : "ss.png"}`;
     return (
         <div>
@@ -43,7 +40,6 @@ function ActionButtons(props) {
                 paperId={paperId}
                 url={url}
                 checked={checked}
-                username={username}
                 handleToggleChecked={handleToggleChecked}
             />
         </div>

@@ -50,7 +50,6 @@ class PaperItem extends React.Component {
                         paperId={this.props.paperId}
                         url={this.props.url}
                         checked={this.props.checked}
-                        username={this.props.username}
                         openURL={this.props.openURL}
                         handleChoose={this.props.handleChooseTitle}
                         handleToggleChecked={this.props.handleToggleChecked}

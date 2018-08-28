@@ -30,7 +30,7 @@ class UserMenu extends React.Component {
 
     render() {
         const { anchorEl } = this.state;
-        const { username } = this.props;
+        const { username, toggleDrawer, handleLogInOut } = this.props;
 
         return (
             <div>
@@ -48,12 +48,11 @@ class UserMenu extends React.Component {
                     onClose={this.handleClose}
                 >
                     {
-                        username !== "Guest" &&
-                        <MenuItem color="inherit" onClick={this.handleMenuItemClick(this.props.toggleDrawer)}>
+                        <MenuItem color="inherit" onClick={this.handleMenuItemClick(toggleDrawer)}>
                             Favorites
                         </MenuItem>
                     }
-                    <MenuItem color="inherit" onClick={this.handleMenuItemClick(this.props.handleLogInOut)}>
+                    <MenuItem color="inherit" onClick={this.handleMenuItemClick(handleLogInOut)}>
                         {username === "Guest" ? "Log in" : "Log out"}
                     </MenuItem>
                 </Menu>
